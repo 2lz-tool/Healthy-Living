@@ -103,9 +103,14 @@ eggs) are placeholders — their calorie figures are estimates until real
 quantities are supplied. See `HANDOFF.md` section 7 for the rest of the
 open questions.
 
-**Apple Watch / Health / smart-scale sync, and widgets** are not built.
-All four need native Swift/Xcode surface area a Tauri shell cannot
-provide on its own:
+**Apple Watch / Health / smart-scale sync, and Mac widgets — deliberately
+parked, not just missing.** Asked about it directly, so this is a decision
+to defer, not an oversight: keep building on the current Tauri app and
+revisit native work later if it still matters once the app's in daily
+use. No smart scale is in the picture yet either, so there's nothing to
+integrate there beyond the manual weight entry already in Trends. All
+four skipped items need native Swift/Xcode surface area a Tauri shell
+cannot provide on its own:
 
 - **HealthKit** (Watch activity, Health app data) is only reachable from
   a native iOS/Catalyst app with the HealthKit entitlement — a plain
@@ -117,10 +122,11 @@ provide on its own:
   ever surface data inside Apple Health, which is the HealthKit
   constraint again.
 
-The realistic options, in order of effort: (1) a periodic export — an
-Apple Shortcuts automation writes Health/Watch metrics to a file this
-app reads, no entitlement or developer account needed, but not live and
-needs a one-time Shortcut setup; (2) a direct API integration for a scale
-brand that has one; (3) a native rewrite (SwiftUI/Catalyst) to get
+If this comes back into scope, the realistic options, in order of effort,
+are: (1) a periodic export — an Apple Shortcuts automation writes
+Health/Watch metrics to a file this app reads, no entitlement or
+developer account needed, but not live and needs a one-time Shortcut
+setup; (2) a direct API integration, for a scale brand that publishes
+one (e.g. Withings); (3) a native rewrite (SwiftUI/Catalyst) to get
 HealthKit, WidgetKit, and Shortcuts support properly — a multi-day
 project, not an increment on the current app.
