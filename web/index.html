@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<title>Meal Plan</title>
+<style>
+:root {
+  --bg: #F2F2F7;
+  --card: #FFFFFF;
+  --card-alt: #FFFFFF;
+  --label: #000000;
+  --label-2: rgba(60,60,67,0.60);
+  --label-3: rgba(60,60,67,0.30);
+  --separator: rgba(60,60,67,0.29);
+  --fill: rgba(120,120,128,0.12);
+  --fill-2: rgba(120,120,128,0.08);
+  --blue: #007AFF;
+  --green: #34C759;
+  --orange: #FF9500;
+  --red: #FF3B30;
+  --purple: #AF52DE;
+  --sidebar: rgba(246,246,248,0.80);
+  --radius: 10px;
+  --radius-lg: 12px;
+  --tabbar: rgba(249,249,249,0.94);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --card: #1C1C1E;
+    --card-alt: #2C2C2E;
+    --label: #FFFFFF;
+    --label-2: rgba(235,235,245,0.60);
+    --label-3: rgba(235,235,245,0.30);
+    --separator: rgba(84,84,88,0.65);
+    --fill: rgba(120,120,128,0.24);
+    --fill-2: rgba(120,120,128,0.16);
+    --blue: #0A84FF;
+    --green: #30D158;
+    --orange: #FF9F0A;
+    --red: #FF453A;
+    --purple: #BF5AF2;
+    --sidebar: rgba(28,28,30,0.80);
+    --tabbar: rgba(22,22,23,0.94);
+  }
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0; padding: 0; height: 100%;
+  background: var(--bg);
+  color: var(--label);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.35;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+button { font: inherit; color: inherit; background: none; border: 0; margin: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; border-radius: 6px; }
+
+/* ---------- shell ---------- */
+.app { display: flex; min-height: 100%; }
+
+.sidebar {
+  display: none;
+  width: 260px; flex: 0 0 260px;
+  position: sticky; top: 0; align-self: flex-start;
+  height: 100vh;
+  padding: 16px 10px;
+  background: var(--sidebar);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  backdrop-filter: saturate(180%) blur(24px);
+  border-right: 0.5px solid var(--separator);
+}
+.sidebar h1 { font-size: 15px; font-weight: 600; color: var(--label-2); margin: 6px 10px 12px; letter-spacing: -0.01em; }
+.side-item {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; min-height: 34px; padding: 6px 10px;
+  border-radius: 7px; font-size: 15px; letter-spacing: -0.01em;
+}
+.side-item[aria-current="page"] { background: var(--blue); color: #fff; }
+.side-item[aria-current="page"] .side-glyph { opacity: 1; }
+.side-glyph { width: 20px; text-align: center; font-size: 15px; opacity: 0.75; }
+.is-desktop .sidebar { padding-top: 28px; }
+
+.main { flex: 1 1 auto; min-width: 0; padding: 0 0 96px; }
+.container { max-width: 720px; margin: 0 auto; padding: 0 16px; }
+
+.largetitle {
+  padding: 12px 0 2px;
+  font-size: 34px; font-weight: 700; letter-spacing: -0.022em;
+}
+.subtitle { color: var(--label-2); font-size: 15px; margin: 2px 0 18px; }
+
+/* ---------- grouped list ---------- */
+.group { margin: 0 0 26px; }
+.group-header {
+  font-size: 13px; color: var(--label-2);
+  padding: 0 16px 7px; letter-spacing: -0.008em;
+}
+.group-footer { font-size: 13px; color: var(--label-2); padding: 7px 16px 0; }
+.list {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.row {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; min-height: 44px;
+  padding: 11px 16px;
+  text-align: left;
+  border-bottom: 0.5px solid var(--separator);
+}
+.row:last-child { border-bottom: 0; }
+button.row:active { background: var(--fill-2); }
+.row-main { flex: 1 1 auto; min-width: 0; }
+.row-title { letter-spacing: -0.01em; }
+.row-sub { font-size: 13px; color: var(--label-2); margin-top: 2px; }
+.row-value { color: var(--label-2); font-size: 15px; flex: 0 0 auto; font-variant-numeric: tabular-nums; }
+.chevron { color: var(--label-3); font-size: 14px; flex: 0 0 auto; }
+
+/* ---------- check control ---------- */
+.check {
+  flex: 0 0 auto;
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 1.5px solid var(--label-3);
+  display: grid; place-items: center;
+  font-size: 13px; color: #fff;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+.done .check { background: var(--blue); border-color: var(--blue); }
+.done .row-title { color: var(--label-2); text-decoration: line-through; text-decoration-color: var(--label-3); }
+
+/* ---------- day card ---------- */
+.day-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 0 16px 7px; gap: 10px;
+}
+.day-name { font-size: 20px; font-weight: 600; letter-spacing: -0.016em; }
+.day-meta { font-size: 13px; color: var(--label-2); font-variant-numeric: tabular-nums; }
+.today-dot {
+  display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--blue); margin-left: 7px; vertical-align: middle;
+}
+.slot { font-size: 13px; color: var(--label-2); width: 62px; flex: 0 0 auto; }
+
+.tag {
+  display: inline-block; font-size: 12px; font-weight: 500;
+  padding: 2px 7px; border-radius: 6px; background: var(--fill);
+  color: var(--label-2); letter-spacing: -0.004em;
+}
+.tag.cook { background: color-mix(in srgb, var(--orange) 16%, transparent); color: var(--orange); }
+.tag.run { background: color-mix(in srgb, var(--green) 16%, transparent); color: var(--green); }
+.tag.yoga { background: color-mix(in srgb, var(--purple) 16%, transparent); color: var(--purple); }
+
+/* ---------- freshness ---------- */
+.bar { height: 4px; border-radius: 2px; background: var(--fill); overflow: hidden; margin-top: 8px; }
+.bar > i { display: block; height: 100%; border-radius: 2px; background: var(--green); }
+.bar.warn > i { background: var(--orange); }
+.bar.late > i { background: var(--red); }
+.covers { font-size: 13px; color: var(--label-2); margin-top: 6px; }
+
+/* ---------- segmented ---------- */
+.segmented {
+  display: flex; gap: 2px; padding: 2px;
+  background: var(--fill); border-radius: 9px; margin-bottom: 18px;
+}
+.segmented button {
+  flex: 1; min-height: 32px; border-radius: 7px;
+  font-size: 13px; font-weight: 500; color: var(--label);
+}
+.segmented button[aria-selected="true"] {
+  background: var(--card); font-weight: 600;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+}
+
+/* ---------- stepper ---------- */
+.stepper { display: flex; align-items: center; background: var(--fill); border-radius: 8px; overflow: hidden; }
+.stepper button { width: 40px; height: 32px; font-size: 19px; line-height: 1; }
+.stepper span { width: 34px; text-align: center; font-size: 15px; font-variant-numeric: tabular-nums; }
+
+/* ---------- sheet ---------- */
+.scrim {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  opacity: 0; pointer-events: none; transition: opacity .28s ease; z-index: 40;
+}
+.scrim.open { opacity: 1; pointer-events: auto; }
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+  max-height: 92vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  background: var(--bg);
+  border-radius: 12px 12px 0 0;
+  transform: translateY(100%);
+  transition: transform .34s cubic-bezier(0.32, 0.72, 0, 1);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.sheet.open { transform: translateY(0); }
+.sheet-bar {
+  position: sticky; top: 0; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; gap: 12px;
+  background: var(--tabbar);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 0.5px solid var(--separator);
+}
+.sheet-title { font-size: 17px; font-weight: 600; letter-spacing: -0.014em; }
+.sheet-done { color: var(--blue); font-weight: 600; font-size: 17px; min-height: 44px; padding: 0 4px; }
+.sheet-body { padding: 18px 16px 40px; max-width: 640px; margin: 0 auto; }
+.grabber { width: 36px; height: 5px; border-radius: 3px; background: var(--label-3); margin: 6px auto 0; }
+@media (min-width: 700px) {
+  .sheet { left: 50%; right: auto; transform: translate(-50%, 100%); width: 640px; border-radius: 12px; bottom: 20px; max-height: 88vh; }
+  .sheet.open { transform: translate(-50%, 0); }
+}
+
+.recipe-meta { color: var(--label-2); font-size: 15px; margin-bottom: 20px; }
+.recipe-h { font-size: 13px; color: var(--label-2); margin: 0 0 7px 16px; }
+.ing { display: flex; justify-content: space-between; gap: 16px; }
+.ing .q { color: var(--label-2); font-variant-numeric: tabular-nums; flex: 0 0 auto; }
+.step { display: flex; gap: 12px; align-items: flex-start; }
+.step-n {
+  flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--fill); color: var(--label-2);
+  font-size: 12px; font-weight: 600; display: grid; place-items: center;
+  margin-top: 1px; font-variant-numeric: tabular-nums;
+}
+.note {
+  background: var(--card); border-radius: var(--radius-lg);
+  padding: 14px 16px; font-size: 15px; color: var(--label-2);
+  border-left: 3px solid var(--orange);
+}
+
+/* ---------- tab bar ---------- */
+.tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+  display: flex;
+  background: var(--tabbar);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-top: 0.5px solid var(--separator);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tabbar button {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; min-height: 49px; font-size: 10px; color: var(--label-2); letter-spacing: -0.002em;
+}
+.tabbar button[aria-current="page"] { color: var(--blue); }
+.tab-glyph { font-size: 17px; }
+
+@media (min-width: 900px) {
+  .sidebar { display: block; }
+  .tabbar { display: none; }
+  .main { padding-bottom: 48px; }
+  .container { padding: 0 28px; max-width: 760px; margin: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: 0.01ms !important; }
+}
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <nav class="sidebar" aria-label="Sections">
+    <h1>Meal Plan</h1>
+    <div id="sidenav"></div>
+  </nav>
+
+  <main class="main">
+    <div class="container" id="view"></div>
+  </main>
+</div>
+
+<nav class="tabbar" id="tabbar" aria-label="Sections"></nav>
+
+<div class="scrim" id="scrim"></div>
+<section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+  <div class="grabber"></div>
+  <div class="sheet-bar">
+    <span class="sheet-title" id="sheetTitle"></span>
+    <button class="sheet-done" id="sheetDone">Done</button>
+  </div>
+  <div class="sheet-body" id="sheetBody"></div>
+</section>
+
+<script>
+"use strict";
+
+/* Running inside the Tauri shell: clear the traffic lights under the
+   overlay title bar. No-op in a plain browser. */
+if (window.__TAURI__) {
+  document.documentElement.classList.add("is-desktop");
+}
+
+/* =========================================================
+   DATA
+   Week 1. Calories are per person, one serving.
+   ========================================================= */
+
+const RECIPES = {
+  idli: {
+    title: "Fermented idli batter",
+    meta: "About 30 idlis. Grind Saturday night, ready Sunday morning.",
+    yieldServes: 2,
+    ingredients: [
+      ["Idli rice", "3 cups"], ["Urad dal", "1 cup"], ["Thick poha", "1/2 cup"],
+      ["Salt", "2 tsp"], ["Fenugreek seeds", "1 tsp"]
+    ],
+    steps: [
+      "Soak the rice and poha in one bowl, the urad dal and fenugreek in another, for 5 hours.",
+      "Grind the urad dal first with cold water until light and airy. Then grind the rice to a slightly coarse paste.",
+      "Combine, add salt, mix with your hand. Leave covered at room temperature overnight.",
+      "Steam in lots of 6. Twelve minutes, then rest 2 minutes before unmoulding."
+    ],
+    note: "Batter holds through Thursday. Reheat six idlis for 90 seconds in the microwave with a damp cloth over them. Anything left after Thursday goes to uttapam, not idli."
+  },
+  chutney: {
+    title: "Peanut chutney",
+    meta: "Keeps 4 days. Coconut chutney only keeps 2, which is why this is the default.",
+    yieldServes: 2,
+    ingredients: [
+      ["Roasted peanuts", "1 cup"], ["Dried red chillies", "3"], ["Garlic", "4 cloves"],
+      ["Tamarind", "thumbnail piece"], ["Salt", "to taste"],
+      ["Mustard seeds", "1/2 tsp"], ["Curry leaves", "1 sprig"], ["Oil", "1 tsp"]
+    ],
+    steps: [
+      "Grind peanuts, chillies, garlic, tamarind and salt with enough water for a thick paste.",
+      "Temper mustard seeds, curry leaves and a pinch of hing in the oil, pour over."
+    ],
+    note: "Fresh batch on Sunday covers through Wednesday. Second batch Wednesday covers Friday and Saturday."
+  },
+  rajma: {
+    title: "Rajma",
+    meta: "Sunday night. Covers three meals.",
+    yieldServes: 2,
+    ingredients: [
+      ["Rajma, soaked overnight", "2 cups"], ["Onion", "3, finely chopped"],
+      ["Tomato", "4, pureed"], ["Ginger garlic paste", "2 tbsp"],
+      ["Oil", "2 tbsp"], ["Turmeric", "1 tsp"], ["Coriander powder", "2 tsp"],
+      ["Red chilli powder", "1.5 tsp"], ["Garam masala", "1 tsp"], ["Rajma masala", "2 tsp"]
+    ],
+    steps: [
+      "Pressure cook the soaked rajma with salt, 6 whistles. Keep the cooking water.",
+      "Brown the onions properly in the oil. Pale onions make flat rajma.",
+      "Add ginger garlic paste, then the tomato puree and dry spices. Cook until the oil separates.",
+      "Add the rajma with its water. Simmer 20 minutes, mashing a ladleful against the side to thicken."
+    ],
+    note: "Wednesday's portion goes to the freezer on Sunday night, not the fridge. Move it down Tuesday evening."
+  },
+  chana: {
+    title: "Chana masala",
+    meta: "Wednesday night. Covers Thursday and Friday lunch, plus Thursday's cold salad.",
+    yieldServes: 2,
+    ingredients: [
+      ["Kabuli chana, soaked overnight", "2 cups"], ["Onion", "3, finely chopped"],
+      ["Tomato", "4, pureed"], ["Ginger garlic paste", "2 tbsp"], ["Oil", "2 tbsp"],
+      ["Chana masala", "2 tsp"], ["Amchur", "1 tsp"], ["Black tea bag", "1"]
+    ],
+    steps: [
+      "Pressure cook the chana with salt and the tea bag, 6 whistles. Remove the bag.",
+      "Same onion tomato base as the rajma.",
+      "Add the chana with a cup of its water, simmer 15 minutes, finish with amchur."
+    ],
+    note: "Hold back a cup of plain boiled chana before it goes into the masala. That is Thursday's dinner salad."
+  },
+  dal: {
+    title: "Dal tadka",
+    meta: "Friday night. Covers Saturday lunch.",
+    yieldServes: 2,
+    ingredients: [
+      ["Toor dal", "1.5 cups"], ["Turmeric", "1 tsp"], ["Ghee", "1.5 tbsp"],
+      ["Cumin seeds", "1 tsp"], ["Garlic", "8 cloves, sliced"],
+      ["Dried red chilli", "2"], ["Tomato", "1, chopped"], ["Lemon", "half"]
+    ],
+    steps: [
+      "Pressure cook the dal with turmeric and salt, 3 whistles. Whisk smooth.",
+      "Heat the ghee, add cumin, then garlic until golden, then chilli, hing and tomato.",
+      "Pour over the dal, simmer 5 minutes, finish with lemon."
+    ],
+    note: "The ghee is counted in the calories. Do not add a second spoon at the table."
+  },
+  rolls: {
+    title: "Air fried rice paper chicken rolls",
+    meta: "Wednesday night. Roll them all, fry half.",
+    yieldServes: 2,
+    ingredients: [
+      ["Chicken mince", "400 g"], ["Rice paper sheets", "16"], ["Spring onion", "4, chopped"],
+      ["Carrot", "1, grated"], ["Garlic", "4 cloves"], ["Ginger", "1 inch"],
+      ["Soy sauce", "2 tbsp"], ["Sesame oil", "2 tsp"], ["Black pepper", "1 tsp"]
+    ],
+    steps: [
+      "Cook the mince with garlic, ginger, spring onion and carrot until completely dry. Wet filling tears the wrapper.",
+      "Add soy, sesame oil and pepper. Cool fully.",
+      "Dip each sheet 8 seconds, fill, fold the sides in, roll tight.",
+      "Spray with oil, air fry 180C for 10 minutes, turning once."
+    ],
+    note: "Unfried rolls keep 2 days if you lay parchment between them. Stacked bare, they fuse into one solid block."
+  },
+  fish: {
+    title: "Air fried fish with greens",
+    meta: "Marinate Sunday, cook Tuesday. Holds 2 days marinated.",
+    yieldServes: 2,
+    ingredients: [
+      ["Surmai or basa", "400 g"], ["Lemon", "1"], ["Ginger garlic paste", "1 tbsp"],
+      ["Turmeric", "1/2 tsp"], ["Red chilli powder", "1 tsp"], ["Oil", "2 tsp"],
+      ["Spinach or beans", "300 g"], ["Garlic", "3 cloves"]
+    ],
+    steps: [
+      "Marinate the fish in everything except the greens. Refrigerate.",
+      "Air fry 180C for 12 minutes.",
+      "Greens: garlic in half a teaspoon of oil, then the greens, 3 minutes, salt and pepper."
+    ],
+    note: null
+  },
+  oats: {
+    title: "Overnight oats",
+    meta: "Two jars, made Sunday night. Monday and Friday.",
+    yieldServes: 2,
+    ingredients: [
+      ["Rolled oats", "80 g"], ["Greek yogurt", "200 g"], ["Milk", "200 ml"],
+      ["Chia seeds", "2 tbsp"], ["Banana", "1"], ["Cinnamon", "1/2 tsp"]
+    ],
+    steps: [
+      "Layer everything into two jars. Stir once so the chia does not clump at the bottom.",
+      "Refrigerate. Good for 3 days."
+    ],
+    note: "Banana added at night browns but does not spoil. Add it in the morning if that bothers you."
+  },
+  smoothie: {
+    title: "Smoothie freezer pack",
+    meta: "Bagged Sunday night, blended Tuesday morning.",
+    yieldServes: 2,
+    ingredients: [
+      ["Banana", "1, in chunks"], ["Spinach", "2 handfuls"], ["Peanut butter", "2 tbsp"],
+      ["Milk", "400 ml"], ["Greek yogurt", "100 g"]
+    ],
+    steps: [
+      "Freeze the banana, spinach and peanut butter in a bag.",
+      "Tip into the blender with milk and yogurt. Ninety seconds."
+    ],
+    note: "Skip granola and honey. Toppings are where a smoothie bowl quietly becomes a 550 calorie breakfast."
+  },
+  chilla: {
+    title: "Besan chilla",
+    meta: "Batter Friday night, cook Saturday morning.",
+    yieldServes: 2,
+    ingredients: [
+      ["Besan", "200 g"], ["Water", "300 ml"], ["Onion", "1, fine"],
+      ["Tomato", "1, fine"], ["Green chilli", "2"], ["Coriander", "handful"],
+      ["Ajwain", "1/2 tsp"], ["Oil", "2 tsp"]
+    ],
+    steps: [
+      "Whisk besan and water to a thin pouring batter. Rest 10 minutes.",
+      "Stir in the vegetables and ajwain. Salt it only when you are about to cook.",
+      "One ladle per chilla on a hot non-stick tawa, half a teaspoon of oil, 2 minutes a side."
+    ],
+    note: "Salted batter goes watery overnight. That is the whole reason salt is the last step."
+  },
+  uttapam: {
+    title: "Uttapam",
+    meta: "Friday dinner. Uses the last of the batter.",
+    yieldServes: 2,
+    ingredients: [
+      ["Idli batter", "remaining"], ["Onion", "1, fine"], ["Tomato", "1, fine"],
+      ["Green chilli", "2"], ["Coriander", "handful"], ["Oil", "2 tsp"]
+    ],
+    steps: [
+      "Thick ladle of batter on a medium tawa. Do not spread it thin.",
+      "Scatter the toppings on the wet surface and press them in.",
+      "Cover, cook 3 minutes, flip, 2 minutes uncovered."
+    ],
+    note: "Batter that is four or five days old is slightly sour, which is correct for uttapam and wrong for idli."
+  },
+  raita: {
+    title: "Carrot cucumber raita",
+    meta: "Made the night before, into the lunch box. Never batched three days ahead.",
+    yieldServes: 2,
+    ingredients: [
+      ["Curd", "300 g"], ["Cucumber", "1, grated"], ["Carrot", "1, grated"],
+      ["Roasted jeera powder", "1/2 tsp"], ["Black salt", "pinch"]
+    ],
+    steps: [
+      "Squeeze the grated cucumber dry. Skipping this is why raita turns watery.",
+      "Whisk the curd smooth, fold everything in."
+    ],
+    note: "Grated cucumber weeps and the curd sours by day two. Same night only."
+  },
+  soup: {
+    title: "Moong dal soup",
+    meta: "Thursday dinner. Base made Wednesday night.",
+    yieldServes: 2,
+    ingredients: [
+      ["Yellow moong dal", "1 cup"], ["Garlic", "8 cloves"], ["Turmeric", "1/2 tsp"],
+      ["Black pepper", "1 tsp"], ["Lemon", "1"]
+    ],
+    steps: [
+      "Pressure cook the dal with turmeric and garlic, 3 whistles.",
+      "Blend completely smooth, thin with hot water to a drinkable consistency.",
+      "Black pepper, salt, lemon at the end. No tempering."
+    ],
+    note: "This is thin blended dal, not a meal on its own. It runs with the cold chana salad."
+  },
+  naatukodi: {
+    title: "Naatukodi curry",
+    meta: "Your recipe. Sunday midday, covers three meals.",
+    yieldServes: 2,
+    ingredients: [["Country chicken", "1 kg"], ["Your usual masala", ""]],
+    steps: ["Cooked to your own method."],
+    note: "Send your ingredient quantities and the calorie figure and this entry gets real numbers instead of an estimate."
+  },
+  nechicken: {
+    title: "North Eastern chicken curry with potatoes",
+    meta: "Your recipe. Saturday evening, carries into next Sunday lunch.",
+    yieldServes: 2,
+    ingredients: [["Chicken", "800 g"], ["Potatoes", "3"], ["Your usual masala", ""]],
+    steps: ["Cooked to your own method."],
+    note: "Send your ingredient quantities and the calorie figure and this entry gets real numbers instead of an estimate."
+  },
+  turkish: {
+    title: "Turkish eggs",
+    meta: "Your recipe. Parked for week 2, it needs a free morning.",
+    yieldServes: 2,
+    ingredients: [["Greek yogurt", "150 g"], ["Eggs", "4"], ["Butter, chilli, garlic", ""]],
+    steps: ["Cooked to your own method."],
+    note: "Not in week 1 because it is a weekday-incompatible cook. It fits a Sunday breakfast in week 2."
+  }
+};
+
+const DAYS = [
+  {
+    key: "sun", name: "Sunday", dow: 0, activity: null, cookTonight: "rajma",
+    meals: [
+      { slot: "Breakfast", title: "Idli x3, peanut chutney, 2 boiled eggs", kcal: 380, recipe: "idli" },
+      { slot: "Lunch", title: "Naatukodi curry, raagi mudda, raita", kcal: 520, recipe: "naatukodi" },
+      { slot: "Dinner", title: "Naatukodi curry, rice", kcal: 450, recipe: "naatukodi" },
+      { slot: "Snacks", title: "Chaas, apple, soaked almonds", kcal: 210, recipe: null }
+    ]
+  },
+  {
+    key: "mon", name: "Monday", dow: 1, activity: "yoga", cookTonight: null,
+    meals: [
+      { slot: "Breakfast", title: "Overnight oats", kcal: 320, recipe: "oats" },
+      { slot: "Lunch", title: "Naatukodi curry, rice, raita", kcal: 520, recipe: "raita" },
+      { slot: "Dinner", title: "Rajma, rice", kcal: 480, recipe: "rajma" },
+      { slot: "Snacks", title: "Chaas, boiled egg", kcal: 140, recipe: null }
+    ]
+  },
+  {
+    key: "tue", name: "Tuesday", dow: 2, activity: "run", cookTonight: null,
+    meals: [
+      { slot: "Breakfast", title: "Smoothie from the freezer pack", kcal: 300, recipe: "smoothie" },
+      { slot: "Lunch", title: "Rajma, rice, raita", kcal: 540, recipe: "rajma" },
+      { slot: "Dinner", title: "Air fried fish, stir fried greens", kcal: 360, recipe: "fish" },
+      { slot: "Snacks", title: "Apple, soaked almonds, chaas", kcal: 210, recipe: null }
+    ]
+  },
+  {
+    key: "wed", name: "Wednesday", dow: 3, activity: "yoga", cookTonight: "chana",
+    meals: [
+      { slot: "Breakfast", title: "Idli x3, peanut chutney, 2 boiled eggs", kcal: 380, recipe: "idli" },
+      { slot: "Lunch", title: "Rajma, rice, raita", kcal: 540, recipe: "rajma" },
+      { slot: "Dinner", title: "Rice paper chicken rolls, air fried", kcal: 400, recipe: "rolls" },
+      { slot: "Snacks", title: "Makhana, chaas", kcal: 170, recipe: null }
+    ]
+  },
+  {
+    key: "thu", name: "Thursday", dow: 4, activity: "run", cookTonight: null,
+    meals: [
+      { slot: "Breakfast", title: "Boiled eggs x3, banana", kcal: 300, recipe: null },
+      { slot: "Lunch", title: "Chana masala, rice, raita", kcal: 520, recipe: "chana" },
+      { slot: "Dinner", title: "Moong dal soup, cold chana salad", kcal: 400, recipe: "soup" },
+      { slot: "Snacks", title: "Chaas, apple", kcal: 160, recipe: null }
+    ]
+  },
+  {
+    key: "fri", name: "Friday", dow: 5, activity: "yoga", cookTonight: "dal",
+    meals: [
+      { slot: "Breakfast", title: "Overnight oats", kcal: 320, recipe: "oats" },
+      { slot: "Lunch", title: "Chana masala, rice, raita", kcal: 520, recipe: "chana" },
+      { slot: "Dinner", title: "Uttapam, peanut chutney", kcal: 420, recipe: "uttapam" },
+      { slot: "Snacks", title: "Boiled egg, chaas", kcal: 140, recipe: null }
+    ]
+  },
+  {
+    key: "sat", name: "Saturday", dow: 6, activity: "run", cookTonight: "nechicken",
+    meals: [
+      { slot: "Breakfast", title: "Besan chilla x2, peanut chutney", kcal: 340, recipe: "chilla" },
+      { slot: "Lunch", title: "Dal, raagi mudda, raita", kcal: 480, recipe: "dal" },
+      { slot: "Dinner", title: "North Eastern chicken curry, rice", kcal: 500, recipe: "nechicken" },
+      { slot: "Snacks", title: "Cucumber and carrot with curd dip, chaas", kcal: 150, recipe: null }
+    ]
+  }
+];
+
+const BATCHES = [
+  { id: "batter", name: "Idli batter", cooked: "Saturday night", life: 5, unit: "days",
+    covers: ["Sunday breakfast", "Wednesday breakfast", "Friday dinner"], recipe: "idli",
+    warn: "Good through Thursday as idli. After that it is uttapam batter." },
+  { id: "naatukodi", name: "Naatukodi curry", cooked: "Sunday midday", life: 2, unit: "days",
+    covers: ["Sunday lunch", "Sunday dinner", "Monday lunch"], recipe: "naatukodi",
+    warn: "Chicken gets 48 hours. This one has to be finished by Monday lunch." },
+  { id: "rajma", name: "Rajma", cooked: "Sunday night", life: 4, unit: "days",
+    covers: ["Monday dinner", "Tuesday lunch", "Wednesday lunch"], recipe: "rajma",
+    warn: "Freeze Wednesday's portion on Sunday night. Move it to the fridge Tuesday evening." },
+  { id: "chana", name: "Chana masala", cooked: "Wednesday night", life: 4, unit: "days",
+    covers: ["Thursday lunch", "Thursday dinner salad", "Friday lunch"], recipe: "chana",
+    warn: "Hold back a cup of plain boiled chana for Thursday's salad." },
+  { id: "dal", name: "Dal tadka", cooked: "Friday night", life: 3, unit: "days",
+    covers: ["Saturday lunch"], recipe: "dal", warn: null },
+  { id: "rolls", name: "Chicken mince rolls", cooked: "Wednesday night", life: 2, unit: "days",
+    covers: ["Wednesday dinner"], recipe: "rolls",
+    warn: "Parchment between the unfried rolls or they fuse." },
+  { id: "nechicken", name: "North Eastern chicken curry", cooked: "Saturday evening", life: 2, unit: "days",
+    covers: ["Saturday dinner", "Next Sunday lunch"], recipe: "nechicken", warn: null },
+  { id: "chutney", name: "Peanut chutney", cooked: "Sunday, then again Wednesday", life: 4, unit: "days",
+    covers: ["Sunday", "Wednesday", "Friday", "Saturday"], recipe: "chutney", warn: null },
+  { id: "yogurt", name: "Greek yogurt, 500 g tub", cooked: "Opened Sunday", life: 5, unit: "days",
+    covers: ["Oats jars 200 g", "Smoothie 100 g", "Curd dip 100 g", "Spare 100 g"], recipe: null,
+    warn: "Opened Sunday, finished by Friday. Raita uses regular curd, not this tub." }
+];
+
+const PREP = {
+  sun: {
+    label: "Sunday night",
+    minutes: 30,
+    tasks: [
+      "Rajma into the cooker while you eat dinner",
+      "Two overnight oats jars",
+      "One smoothie freezer bag",
+      "Six boiled eggs",
+      "Peanut chutney",
+      "Marinate the fish, into the fridge",
+      "Wednesday's rajma portion into the freezer",
+      "Monday's raita into the lunch box"
+    ]
+  },
+  wed: {
+    label: "Wednesday night",
+    minutes: 30,
+    tasks: [
+      "Chana into the cooker, hold back a cup of plain boiled chana",
+      "Cook the mince filling and roll all sixteen rolls",
+      "Air fry half for tonight, parchment between the rest",
+      "Moong dal soup base",
+      "Fresh peanut chutney",
+      "Six boiled eggs",
+      "Thursday's raita into the lunch box"
+    ]
+  },
+  fri: {
+    label: "Friday night",
+    minutes: 20,
+    tasks: [
+      "Dal tadka",
+      "Besan batter, no salt yet",
+      "Saturday's raita",
+      "Soak chana or rajma for next week if you are repeating either"
+    ]
+  },
+  sat: {
+    label: "Saturday night",
+    minutes: 25,
+    tasks: [
+      "Soak idli rice, urad dal and poha, 5 hours",
+      "Grind and leave the batter out overnight",
+      "North Eastern chicken curry if you have not cooked it in the evening"
+    ]
+  }
+};
+
+const SHOPPING = [
+  { cat: "Produce", items: [
+    ["Onion", "1.5 kg"], ["Tomato", "1 kg"], ["Cucumber", "7"], ["Carrot", "8"],
+    ["Spinach", "500 g"], ["Beans or methi", "300 g"], ["Banana", "6"],
+    ["Apple", "5"], ["Spring onion", "1 bunch"], ["Coriander", "2 bunches"],
+    ["Green chilli", "12"], ["Curry leaves", "2 sprigs"], ["Ginger", "150 g"],
+    ["Garlic", "3 heads"], ["Lemon", "6"], ["Potato", "3"]
+  ]},
+  { cat: "Protein", items: [
+    ["Country chicken", "1 kg"], ["Chicken, curry cut", "800 g"],
+    ["Chicken mince", "400 g"], ["Fish, surmai or basa", "400 g"],
+    ["Eggs", "20"]
+  ]},
+  { cat: "Dairy", items: [
+    ["Greek yogurt", "500 g tub"], ["Curd", "2 kg"], ["Milk", "2 L"], ["Ghee", "small pack"]
+  ]},
+  { cat: "Grains and legumes", items: [
+    ["Idli rice", "3 cups"], ["Urad dal", "1 cup"], ["Thick poha", "1/2 cup"],
+    ["Rajma", "2 cups"], ["Kabuli chana", "2.5 cups"], ["Toor dal", "1.5 cups"],
+    ["Yellow moong dal", "1 cup"], ["Rolled oats", "500 g"], ["Besan", "500 g"],
+    ["Ragi flour", "500 g"], ["Rice", "as needed"]
+  ]},
+  { cat: "Other", items: [
+    ["Rice paper sheets", "16"], ["Peanuts, roasted", "300 g"], ["Peanut butter", "1 jar"],
+    ["Almonds", "200 g"], ["Makhana", "100 g"], ["Chia seeds", "100 g"],
+    ["Tamarind", "small block"], ["Soy sauce", "1 bottle"], ["Sesame oil", "small"]
+  ]}
+];
+
+const TABS = [
+  { id: "week", label: "Week", glyph: "\u25A4" },
+  { id: "tonight", label: "Tonight", glyph: "\u25D1" },
+  { id: "batches", label: "Batches", glyph: "\u25CE" },
+  { id: "recipes", label: "Recipes", glyph: "\u2261" },
+  { id: "shopping", label: "Shopping", glyph: "\u2713" }
+];
+
+/* =========================================================
+   STATE
+   ========================================================= */
+
+const KEY = "mealplan.week1.v1";
+const defaults = { people: 2, done: {}, prep: {}, bought: {}, tab: "week" };
+let state = load();
+
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    return raw ? Object.assign({}, defaults, JSON.parse(raw)) : Object.assign({}, defaults);
+  } catch (e) {
+    return Object.assign({}, defaults);
+  }
+}
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* private mode */ }
+}
+function toggle(bucket, id) {
+  state[bucket][id] = !state[bucket][id];
+  save();
+}
+
+const todayDow = new Date().getDay();
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+function el(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+function scale(kcal) { return kcal; }
+function dayTotal(day) {
+  return day.meals.reduce(function (s, m) { return s + m.kcal; }, 0);
+}
+function checkRow(id, bucket, title, sub, onAfter) {
+  const b = el("button", "row" + (state[bucket][id] ? " done" : ""));
+  b.type = "button";
+  b.setAttribute("aria-pressed", state[bucket][id] ? "true" : "false");
+  const c = el("span", "check", "\u2713");
+  const main = el("div", "row-main");
+  main.appendChild(el("div", "row-title", title));
+  if (sub) main.appendChild(el("div", "row-sub", sub));
+  b.appendChild(c);
+  b.appendChild(main);
+  b.addEventListener("click", function () {
+    toggle(bucket, id);
+    b.classList.toggle("done");
+    b.setAttribute("aria-pressed", state[bucket][id] ? "true" : "false");
+    if (onAfter) onAfter();
+  });
+  return b;
+}
+
+/* =========================================================
+   SHEET
+   ========================================================= */
+
+const sheet = document.getElementById("sheet");
+const scrim = document.getElementById("scrim");
+const sheetBody = document.getElementById("sheetBody");
+const sheetTitle = document.getElementById("sheetTitle");
+let lastFocus = null;
+
+function openRecipe(key) {
+  const r = RECIPES[key];
+  if (!r) return;
+  lastFocus = document.activeElement;
+  sheetTitle.textContent = r.title;
+  sheetBody.innerHTML = "";
+
+  sheetBody.appendChild(el("p", "recipe-meta", r.meta));
+
+  const ig = el("div", "group");
+  ig.appendChild(el("div", "recipe-h", "Ingredients for " + state.people + (state.people === 1 ? " person" : " people")));
+  const il = el("div", "list");
+  r.ingredients.forEach(function (pair) {
+    const row = el("div", "row");
+    const line = el("div", "row-main ing");
+    line.appendChild(el("span", "row-title", pair[0]));
+    if (pair[1]) line.appendChild(el("span", "q", pair[1]));
+    row.appendChild(line);
+    il.appendChild(row);
+  });
+  ig.appendChild(il);
+  sheetBody.appendChild(ig);
+
+  const sg = el("div", "group");
+  sg.appendChild(el("div", "recipe-h", "Method"));
+  const sl = el("div", "list");
+  r.steps.forEach(function (s, i) {
+    const row = el("div", "row");
+    const wrap = el("div", "row-main step");
+    wrap.appendChild(el("span", "step-n", String(i + 1)));
+    wrap.appendChild(el("span", "", s));
+    row.appendChild(wrap);
+    sl.appendChild(row);
+  });
+  sg.appendChild(sl);
+  sheetBody.appendChild(sg);
+
+  if (r.note) {
+    const n = el("div", "note", r.note);
+    sheetBody.appendChild(n);
+  }
+
+  sheet.hidden = false;
+  requestAnimationFrame(function () {
+    sheet.classList.add("open");
+    scrim.classList.add("open");
+  });
+  document.getElementById("sheetDone").focus();
+}
+
+function closeSheet() {
+  sheet.classList.remove("open");
+  scrim.classList.remove("open");
+  setTimeout(function () {
+    sheet.hidden = true;
+    if (lastFocus) lastFocus.focus();
+  }, 300);
+}
+document.getElementById("sheetDone").addEventListener("click", closeSheet);
+scrim.addEventListener("click", closeSheet);
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape" && !sheet.hidden) closeSheet();
+});
+
+/* =========================================================
+   VIEWS
+   ========================================================= */
+
+const view = document.getElementById("view");
+
+function header(title, sub) {
+  view.appendChild(el("h1", "largetitle", title));
+  if (sub) view.appendChild(el("p", "subtitle", sub));
+}
+
+function renderWeek() {
+  header("This Week", "Week 1. Calories are one serving, per person.");
+
+  const weekKcal = DAYS.reduce(function (s, d) { return s + dayTotal(d); }, 0);
+  const avg = Math.round(weekKcal / 7);
+
+  const sg = el("div", "group");
+  const sl = el("div", "list");
+  const srow = el("div", "row");
+  const smain = el("div", "row-main");
+  smain.appendChild(el("div", "row-title", "Daily average"));
+  smain.appendChild(el("div", "row-sub", "Protein target 90 to 100 g"));
+  srow.appendChild(smain);
+  srow.appendChild(el("span", "row-value", avg + " kcal"));
+  sl.appendChild(srow);
+
+  const prow = el("div", "row");
+  const pmain = el("div", "row-main");
+  pmain.appendChild(el("div", "row-title", "Cooking for"));
+  pmain.appendChild(el("div", "row-sub", "Batch sizes scale, calories do not"));
+  prow.appendChild(pmain);
+  const stepper = el("div", "stepper");
+  const minus = el("button", null, "\u2212");
+  minus.setAttribute("aria-label", "Fewer people");
+  const count = el("span", null, String(state.people));
+  const plus = el("button", null, "+");
+  plus.setAttribute("aria-label", "More people");
+  minus.addEventListener("click", function () {
+    state.people = Math.max(1, state.people - 1); count.textContent = state.people; save();
+  });
+  plus.addEventListener("click", function () {
+    state.people = Math.min(6, state.people + 1); count.textContent = state.people; save();
+  });
+  stepper.appendChild(minus); stepper.appendChild(count); stepper.appendChild(plus);
+  prow.appendChild(stepper);
+  sl.appendChild(prow);
+  sg.appendChild(sl);
+  view.appendChild(sg);
+
+  DAYS.forEach(function (day) {
+    const g = el("div", "group");
+    const head = el("div", "day-head");
+    const left = el("div");
+    const nameEl = el("span", "day-name", day.name);
+    left.appendChild(nameEl);
+    if (day.dow === todayDow) {
+      const dot = el("span", "today-dot");
+      dot.setAttribute("aria-label", "Today");
+      left.appendChild(dot);
+    }
+    head.appendChild(left);
+
+    const right = el("div", "day-meta");
+    if (day.activity) {
+      const t = el("span", "tag " + day.activity, day.activity === "run" ? "Run" : "Yoga");
+      right.appendChild(t);
+      right.appendChild(document.createTextNode(" "));
+    }
+    right.appendChild(document.createTextNode(dayTotal(day) + " kcal"));
+    head.appendChild(right);
+    g.appendChild(head);
+
+    const list = el("div", "list");
+    day.meals.forEach(function (m, i) {
+      const id = day.key + ":" + i;
+      const b = el("button", "row" + (state.done[id] ? " done" : ""));
+      b.type = "button";
+      const c = el("span", "check", "\u2713");
+      const slot = el("span", "slot", m.slot);
+      const main = el("div", "row-main");
+      main.appendChild(el("div", "row-title", m.title));
+      const val = el("span", "row-value", m.kcal + "");
+      b.appendChild(c); b.appendChild(slot); b.appendChild(main); b.appendChild(val);
+      b.addEventListener("click", function () {
+        toggle("done", id);
+        b.classList.toggle("done");
+      });
+      list.appendChild(b);
+
+      if (m.recipe) {
+        val.style.cursor = "pointer";
+      }
+    });
+
+    if (day.cookTonight) {
+      const cb = el("button", "row");
+      cb.type = "button";
+      cb.appendChild(el("span", "tag cook", "Cook"));
+      const main = el("div", "row-main");
+      main.appendChild(el("div", "row-title", RECIPES[day.cookTonight].title + " tonight"));
+      main.appendChild(el("div", "row-sub", "Tap for the method"));
+      cb.appendChild(main);
+      cb.appendChild(el("span", "chevron", "\u203A"));
+      cb.addEventListener("click", function () { openRecipe(day.cookTonight); });
+      list.appendChild(cb);
+    }
+
+    g.appendChild(list);
+    view.appendChild(g);
+  });
+
+  const f = el("p", "group-footer", "Rice is cooked fresh each morning. Raita is made the night before, into the lunch box.");
+  view.appendChild(f);
+}
+
+function renderTonight() {
+  header("Tonight", "The evening cook, and what it carries.");
+
+  const map = { 0: "sun", 3: "wed", 5: "fri", 6: "sat" };
+  const todayKey = map[todayDow];
+
+  const order = ["sun", "wed", "fri", "sat"];
+  order.forEach(function (k) {
+    const p = PREP[k];
+    const g = el("div", "group");
+    const isToday = k === todayKey;
+    g.appendChild(el("div", "group-header", p.label + (isToday ? "  \u00B7  Tonight" : "") + "  \u00B7  about " + p.minutes + " minutes"));
+    const list = el("div", "list");
+    p.tasks.forEach(function (t, i) {
+      list.appendChild(checkRow(k + ":" + i, "prep", t, null, null));
+    });
+    g.appendChild(list);
+    view.appendChild(g);
+  });
+
+  const note = el("div", "note", "Nothing on this list is a morning job. Weekday mornings are rice and a microwave.");
+  view.appendChild(note);
+}
+
+function renderBatches() {
+  header("Batches", "One pot, several meals. What each cook is covering.");
+
+  BATCHES.forEach(function (b) {
+    const g = el("div", "group");
+    g.appendChild(el("div", "group-header", b.cooked));
+    const list = el("div", "list");
+
+    const row = el("button", "row");
+    row.type = "button";
+    const main = el("div", "row-main");
+    main.appendChild(el("div", "row-title", b.name));
+    main.appendChild(el("div", "row-sub", "Keeps " + b.life + " " + b.unit));
+
+    const bar = el("div", "bar" + (b.life <= 2 ? " late" : b.life <= 3 ? " warn" : ""));
+    const fill = el("i");
+    fill.style.width = Math.min(100, (b.life / 5) * 100) + "%";
+    bar.appendChild(fill);
+    main.appendChild(bar);
+    main.appendChild(el("div", "covers", b.covers.join("  \u00B7  ")));
+
+    row.appendChild(main);
+    if (b.recipe) {
+      row.appendChild(el("span", "chevron", "\u203A"));
+      row.addEventListener("click", function () { openRecipe(b.recipe); });
+    }
+    list.appendChild(row);
+    g.appendChild(list);
+
+    if (b.warn) g.appendChild(el("div", "group-footer", b.warn));
+    view.appendChild(g);
+  });
+}
+
+function renderRecipes() {
+  header("Recipes", "Quantities are for two. Adjust with the stepper on the week screen.");
+
+  const mine = ["naatukodi", "nechicken", "turkish"];
+  const groups = [
+    { name: "Batches and bases", keys: ["idli", "chutney", "rajma", "chana", "dal", "soup"] },
+    { name: "Assembled", keys: ["oats", "smoothie", "chilla", "uttapam", "raita", "rolls", "fish"] },
+    { name: "Yours, not mine", keys: mine }
+  ];
+
+  groups.forEach(function (grp) {
+    const g = el("div", "group");
+    g.appendChild(el("div", "group-header", grp.name));
+    const list = el("div", "list");
+    grp.keys.forEach(function (k) {
+      const r = RECIPES[k];
+      const b = el("button", "row");
+      b.type = "button";
+      const main = el("div", "row-main");
+      main.appendChild(el("div", "row-title", r.title));
+      main.appendChild(el("div", "row-sub", r.meta));
+      b.appendChild(main);
+      b.appendChild(el("span", "chevron", "\u203A"));
+      b.addEventListener("click", function () { openRecipe(k); });
+      list.appendChild(b);
+    });
+    g.appendChild(list);
+    view.appendChild(g);
+  });
+
+  view.appendChild(el("p", "group-footer", "The three under Yours are placeholders. Send quantities and calories and they get filled in properly."));
+}
+
+function renderShopping() {
+  header("Shopping", "One week, two people. Buy the yogurt tub on Saturday.");
+
+  const totalItems = SHOPPING.reduce(function (s, c) { return s + c.items.length; }, 0);
+  const countEl = el("p", "subtitle", "");
+  function refreshCount() {
+    let n = 0;
+    SHOPPING.forEach(function (c) {
+      c.items.forEach(function (it) { if (state.bought[c.cat + ":" + it[0]]) n++; });
+    });
+    countEl.textContent = n + " of " + totalItems + " in the basket";
+  }
+  view.appendChild(countEl);
+  refreshCount();
+
+  SHOPPING.forEach(function (c) {
+    const g = el("div", "group");
+    g.appendChild(el("div", "group-header", c.cat));
+    const list = el("div", "list");
+    c.items.forEach(function (it) {
+      const id = c.cat + ":" + it[0];
+      const row = checkRow(id, "bought", it[0], null, refreshCount);
+      row.appendChild(el("span", "row-value", it[1]));
+      list.appendChild(row);
+    });
+    g.appendChild(list);
+    view.appendChild(g);
+  });
+
+  const clear = el("div", "group");
+  const cl = el("div", "list");
+  const cb = el("button", "row");
+  cb.type = "button";
+  const cm = el("div", "row-main");
+  const t = el("div", "row-title", "Clear the basket");
+  t.style.color = "var(--red)";
+  cm.appendChild(t);
+  cb.appendChild(cm);
+  cb.addEventListener("click", function () {
+    state.bought = {}; save(); render();
+  });
+  cl.appendChild(cb);
+  clear.appendChild(cl);
+  view.appendChild(clear);
+}
+
+const VIEWS = {
+  week: renderWeek,
+  tonight: renderTonight,
+  batches: renderBatches,
+  recipes: renderRecipes,
+  shopping: renderShopping
+};
+
+/* =========================================================
+   NAV
+   ========================================================= */
+
+function buildNav() {
+  const side = document.getElementById("sidenav");
+  const tabbar = document.getElementById("tabbar");
+  side.innerHTML = "";
+  tabbar.innerHTML = "";
+
+  TABS.forEach(function (t) {
+    const s = el("button", "side-item");
+    s.type = "button";
+    s.appendChild(el("span", "side-glyph", t.glyph));
+    s.appendChild(el("span", null, t.label));
+    if (state.tab === t.id) s.setAttribute("aria-current", "page");
+    s.addEventListener("click", function () { go(t.id); });
+    side.appendChild(s);
+
+    const b = el("button");
+    b.type = "button";
+    b.appendChild(el("span", "tab-glyph", t.glyph));
+    b.appendChild(el("span", null, t.label));
+    if (state.tab === t.id) b.setAttribute("aria-current", "page");
+    b.addEventListener("click", function () { go(t.id); });
+    tabbar.appendChild(b);
+  });
+}
+
+function go(id) {
+  state.tab = id;
+  save();
+  render();
+  window.scrollTo(0, 0);
+}
+
+function render() {
+  view.innerHTML = "";
+  (VIEWS[state.tab] || renderWeek)();
+  buildNav();
+}
+
+render();
+</script>
+</body>
+</html>
