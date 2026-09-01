@@ -262,7 +262,7 @@ button.row:active { background: var(--fill-2); }
   .container { padding: 0 28px; max-width: 760px; margin: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  * { transition-duration: 0.01ms !important; }
+  * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }
 .hidden { display: none; }
 
@@ -1508,6 +1508,8 @@ function renderTrends() {
   moodMain.appendChild(el("div", "row-title", "Mood"));
   const moodBtns = el("div", "mood-row");
   moodBtns.style.marginTop = "8px";
+  moodBtns.setAttribute("role", "group");
+  moodBtns.setAttribute("aria-label", "Mood");
   MOODS.forEach(function (m) {
     const b = el("button", "mood-btn");
     b.type = "button";
@@ -1530,9 +1532,12 @@ function renderTrends() {
   const seg = el("div", "segmented");
   seg.style.marginTop = "8px";
   seg.style.marginBottom = "0";
+  seg.setAttribute("role", "tablist");
+  seg.setAttribute("aria-label", "Active today");
   [["none", "None"], ["run", "Run"], ["yoga", "Yoga"], ["other", "Other"]].forEach(function (opt) {
     const b = el("button", null, opt[1]);
     b.type = "button";
+    b.setAttribute("role", "tab");
     b.setAttribute("aria-selected", (entry.activity || "none") === opt[0] ? "true" : "false");
     b.addEventListener("click", function () {
       logToday({ activity: opt[0] === "none" ? null : opt[0] });
