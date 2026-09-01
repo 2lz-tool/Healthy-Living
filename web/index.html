@@ -265,6 +265,109 @@ button.row:active { background: var(--fill-2); }
   * { transition-duration: 0.01ms !important; }
 }
 .hidden { display: none; }
+
+/* ---------- immersive wash + view transition ---------- */
+.main { position: relative; }
+.main::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 280px;
+  background: radial-gradient(120% 100% at 20% 0%, color-mix(in srgb, var(--blue) 16%, transparent), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+body[data-tab="tonight"] .main::before { background: radial-gradient(120% 100% at 20% 0%, color-mix(in srgb, var(--orange) 16%, transparent), transparent 70%); }
+body[data-tab="batches"] .main::before { background: radial-gradient(120% 100% at 20% 0%, color-mix(in srgb, var(--green) 16%, transparent), transparent 70%); }
+body[data-tab="recipes"] .main::before { background: radial-gradient(120% 100% at 20% 0%, color-mix(in srgb, var(--purple) 16%, transparent), transparent 70%); }
+body[data-tab="trends"] .main::before { background: radial-gradient(120% 100% at 20% 0%, color-mix(in srgb, var(--purple) 16%, transparent), transparent 70%); }
+.container { position: relative; z-index: 1; }
+@keyframes viewIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+#view.view-anim { animation: viewIn .22s ease; }
+
+/* ---------- activity rings ---------- */
+.ring-row { display: flex; gap: 22px; align-items: center; padding: 6px 0 4px; flex-wrap: wrap; }
+.ring-item { display: flex; align-items: center; gap: 12px; }
+.ring svg { transform: rotate(-90deg); }
+.ring circle { fill: none; }
+.ring .track { stroke: var(--fill); }
+.ring .fill { stroke-linecap: round; transition: stroke-dashoffset .6s ease; }
+.ring-label { line-height: 1.25; }
+.ring-value { font-size: 17px; font-weight: 700; letter-spacing: -0.014em; }
+.ring-sub { font-size: 12px; color: var(--label-2); }
+
+/* ---------- stat tiles / KPI row ---------- */
+.kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); gap: 10px; margin-bottom: 20px; }
+.stat-tile { background: var(--card); border-radius: var(--radius-lg); padding: 14px 14px 12px; }
+.stat-label { font-size: 12px; color: var(--label-2); margin-bottom: 6px; letter-spacing: -0.006em; }
+.stat-value { font-size: 22px; font-weight: 700; letter-spacing: -0.018em; }
+.stat-tile.accent .stat-value { color: var(--orange); }
+.stat-sub { font-size: 12px; color: var(--label-3); margin-top: 2px; }
+
+/* ---------- line chart ---------- */
+.chart-wrap { background: var(--card); border-radius: var(--radius-lg); padding: 14px 14px 10px; margin-bottom: 12px; }
+.chart-title-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; gap: 10px; }
+.chart-title { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+.chart-delta { font-size: 13px; font-variant-numeric: tabular-nums; color: var(--label-2); flex: 0 0 auto; }
+.chart-delta.good { color: var(--green); }
+.chart-delta.bad { color: var(--red); }
+.chart-svg-wrap { position: relative; }
+.chart-svg-wrap svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+.chart .gridline { stroke: var(--separator); stroke-width: 1; }
+.chart .line { fill: none; stroke: var(--blue); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.chart .area { fill: var(--blue); opacity: 0.10; }
+.chart .dot { fill: var(--blue); stroke: var(--card); stroke-width: 2; }
+.chart .endlabel { font-size: 11px; fill: var(--label-2); font-variant-numeric: tabular-nums; }
+.chart .hoverline { stroke: var(--label-3); stroke-width: 1; stroke-dasharray: 2 2; }
+.chart-empty { color: var(--label-2); font-size: 14px; padding: 18px 2px; }
+.chart-tooltip {
+  position: absolute; pointer-events: none; background: var(--card-alt);
+  border: 0.5px solid var(--separator); border-radius: 8px; padding: 6px 9px;
+  font-size: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.16); white-space: nowrap;
+  transform: translate(-50%, -112%); opacity: 0; transition: opacity .1s ease; z-index: 2;
+}
+.chart-tooltip.show { opacity: 1; }
+
+/* ---------- mood picker ---------- */
+.mood-row { display: flex; gap: 8px; margin-bottom: 4px; }
+.mood-btn {
+  flex: 1; min-height: 56px; border-radius: 12px; background: var(--fill);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  font-size: 22px;
+}
+.mood-btn .mood-label { font-size: 11px; color: var(--label-2); }
+.mood-btn[aria-pressed="true"] { background: var(--blue); }
+.mood-btn[aria-pressed="true"] .mood-label { color: rgba(255,255,255,0.85); }
+
+/* ---------- text fields ---------- */
+.field-row { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 11px 16px; border-bottom: 0.5px solid var(--separator); }
+.field-row:last-child { border-bottom: 0; }
+.field-label { flex: 0 0 auto; }
+.field-input, .field-textarea {
+  flex: 1 1 auto; text-align: right; border: 0; background: transparent; color: var(--label);
+  font: inherit; font-variant-numeric: tabular-nums; min-height: 22px; padding: 0;
+}
+.field-textarea { text-align: left; resize: none; font-variant-numeric: normal; }
+.field-input::placeholder, .field-textarea::placeholder { color: var(--label-3); }
+.field-go { flex: 0 0 auto; color: var(--blue); font-weight: 600; min-height: 44px; padding: 0 2px; }
+.field-go:disabled { color: var(--label-3); }
+
+/* ---------- calendar ---------- */
+.cal-head { display: flex; align-items: center; justify-content: space-between; padding: 0 16px 10px; }
+.cal-month { font-size: 15px; font-weight: 600; }
+.cal-nav button { min-width: 32px; min-height: 32px; font-size: 17px; color: var(--blue); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 0 16px; }
+.cal-dow { text-align: center; font-size: 11px; color: var(--label-2); padding-bottom: 4px; }
+.cal-cell {
+  aspect-ratio: 1; border-radius: 9px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1px; font-size: 12px;
+  background: var(--fill-2); position: relative;
+}
+.cal-cell.empty { background: transparent; }
+.cal-cell.today { box-shadow: inset 0 0 0 2px var(--blue); }
+.cal-daynum { color: var(--label-2); font-variant-numeric: tabular-nums; }
+.cal-cell.followed .cal-daynum { color: var(--label); font-weight: 600; }
+.cal-mood { font-size: 13px; line-height: 1; }
+.cal-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); position: absolute; bottom: 5px; }
+.cal-legend { display: flex; gap: 14px; padding: 10px 16px 0; font-size: 12px; color: var(--label-2); flex-wrap: wrap; }
+.cal-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.cal-legend i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
 </style>
 </head>
 <body>
@@ -711,15 +814,30 @@ const TABS = [
   { id: "tonight", label: "Tonight", glyph: "\u25D1" },
   { id: "batches", label: "Batches", glyph: "\u25CE" },
   { id: "recipes", label: "Recipes", glyph: "\u2261" },
-  { id: "shopping", label: "Shopping", glyph: "\u2713" }
+  { id: "shopping", label: "Shopping", glyph: "\u2713" },
+  { id: "trends", label: "Trends", glyph: "\u2197" }
 ];
+
+const MOODS = [
+  { id: "great", emoji: "\u{1F60A}", label: "Great" },
+  { id: "okay", emoji: "\u{1F610}", label: "Okay" },
+  { id: "rough", emoji: "\u{1F615}", label: "Rough" }
+];
+
+/* Nutrition earned is a fixed estimate per activity you confirm for the day,
+   not a measurement. Real numbers arrive once this reads from a watch. */
+const ACTIVITY_CREDIT = { run: 300, yoga: 150, other: 150 };
+const ACTIVITY_LABEL = { run: "Run", yoga: "Yoga", other: "Active" };
 
 /* =========================================================
    STATE
    ========================================================= */
 
 const KEY = "mealplan.week1.v1";
-const defaults = { people: 2, done: {}, prep: {}, bought: {}, tab: "week" };
+const defaults = {
+  people: 2, done: {}, prep: {}, bought: {}, tab: "week",
+  dailyLog: {}, targetWeightKg: null, targetDailyKcal: null
+};
 let state = load();
 
 function load() {
@@ -771,6 +889,273 @@ function checkRow(id, bucket, title, sub, onAfter) {
     if (onAfter) onAfter();
   });
   return b;
+}
+
+/* ---------- daily check-in: real calendar dates, independent of
+   the weekday-keyed done/prep/bought state above, so this never
+   touches or risks the Week/Tonight/Shopping data. ---------- */
+
+function isoDate(d) {
+  const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, "0"), day = String(d.getDate()).padStart(2, "0");
+  return y + "-" + m + "-" + day;
+}
+function todayIso() { return isoDate(new Date()); }
+function addDaysIso(iso, n) {
+  const d = new Date(iso + "T00:00:00");
+  d.setDate(d.getDate() + n);
+  return isoDate(d);
+}
+function shortDate(iso) {
+  return new Date(iso + "T00:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+function dailyEntry(iso) {
+  return state.dailyLog[iso] || null;
+}
+function logToday(patch) {
+  const iso = todayIso();
+  state.dailyLog[iso] = Object.assign({}, state.dailyLog[iso], patch);
+  save();
+  syncTray();
+}
+function weekAvgKcal() {
+  const total = DAYS.reduce(function (s, d) { return s + dayTotal(d); }, 0);
+  return Math.round(total / DAYS.length);
+}
+function targetDailyKcal() {
+  return state.targetDailyKcal || weekAvgKcal();
+}
+function followedLastNDays(n) {
+  let count = 0;
+  for (let i = 0; i < n; i++) {
+    const e = dailyEntry(addDaysIso(todayIso(), -i));
+    if (e && e.planFollowed) count++;
+  }
+  return count;
+}
+function computeStreak() {
+  let cursor = todayIso();
+  const today = dailyEntry(cursor);
+  if (!today || !today.planFollowed) cursor = addDaysIso(cursor, -1);
+  let n = 0;
+  while (true) {
+    const e = dailyEntry(cursor);
+    if (e && e.planFollowed) { n++; cursor = addDaysIso(cursor, -1); } else { break; }
+  }
+  return n;
+}
+function followedDays() {
+  return Object.keys(state.dailyLog).filter(function (iso) { return state.dailyLog[iso].planFollowed; });
+}
+/* Calories saved is (your target − this week's average planned day) for
+   every day you mark the plan followed. It is a credit against a target
+   you set, not a measurement of what you actually ate. */
+function caloriesSavedTotal() {
+  const perDay = Math.max(0, targetDailyKcal() - weekAvgKcal());
+  return perDay * followedDays().length;
+}
+/* Nutrition earned is a fixed estimate per activity you confirm for the
+   day (see ACTIVITY_CREDIT) — manual until this reads real workout data. */
+function nutritionEarnedTotal() {
+  let n = 0;
+  Object.keys(state.dailyLog).forEach(function (iso) {
+    const a = state.dailyLog[iso].activity;
+    if (a && ACTIVITY_CREDIT[a] != null) n += ACTIVITY_CREDIT[a];
+  });
+  return n;
+}
+function weightEntries() {
+  return Object.keys(state.dailyLog)
+    .filter(function (iso) { return state.dailyLog[iso].weightKg != null; })
+    .sort()
+    .map(function (iso) { return { date: iso, value: state.dailyLog[iso].weightKg }; });
+}
+function cheatEntries() {
+  return Object.keys(state.dailyLog)
+    .filter(function (iso) { return state.dailyLog[iso].cheat; })
+    .sort()
+    .reverse()
+    .map(function (iso) { return Object.assign({ date: iso }, state.dailyLog[iso].cheat); });
+}
+function syncTray() {
+  if (!window.__TAURI__) return;
+  try {
+    const streak = computeStreak();
+    const text = streak > 0 ? ("\u{1F525}" + streak) : "Meal Plan";
+    window.__TAURI__.core.invoke("set_tray_status", { text: text });
+  } catch (e) { /* not running inside the tray-capable shell */ }
+}
+
+function statTile(label, value, extraClass, sub) {
+  const t = el("div", "stat-tile" + (extraClass ? " " + extraClass : ""));
+  t.appendChild(el("div", "stat-label", label));
+  t.appendChild(el("div", "stat-value", value));
+  if (sub) t.appendChild(el("div", "stat-sub", sub));
+  return t;
+}
+
+function ringSvg(percent, colorVar, size, stroke) {
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const clamped = Math.max(0, Math.min(1, percent));
+  const svgns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgns, "svg");
+  svg.setAttribute("class", "ring");
+  svg.setAttribute("width", size); svg.setAttribute("height", size);
+  svg.setAttribute("viewBox", "0 0 " + size + " " + size);
+  const track = document.createElementNS(svgns, "circle");
+  track.setAttribute("class", "track");
+  track.setAttribute("cx", size / 2); track.setAttribute("cy", size / 2); track.setAttribute("r", r);
+  track.setAttribute("stroke-width", stroke);
+  svg.appendChild(track);
+  const fill = document.createElementNS(svgns, "circle");
+  fill.setAttribute("class", "fill");
+  fill.setAttribute("cx", size / 2); fill.setAttribute("cy", size / 2); fill.setAttribute("r", r);
+  fill.setAttribute("stroke-width", stroke);
+  fill.style.stroke = "var(" + colorVar + ")";
+  fill.setAttribute("stroke-dasharray", c.toFixed(2));
+  fill.setAttribute("stroke-dashoffset", (c * (1 - clamped)).toFixed(2));
+  svg.appendChild(fill);
+  return svg;
+}
+function ringItem(percent, colorVar, value, sub) {
+  const item = el("div", "ring-item");
+  item.appendChild(ringSvg(percent, colorVar, 56, 6));
+  const label = el("div", "ring-label");
+  label.appendChild(el("div", "ring-value", value));
+  label.appendChild(el("div", "ring-sub", sub));
+  item.appendChild(label);
+  return item;
+}
+
+function checkRowDaily(field, title, sub) {
+  const entry = dailyEntry(todayIso()) || {};
+  const on = !!entry[field];
+  const b = el("button", "row" + (on ? " done" : ""));
+  b.type = "button";
+  b.setAttribute("aria-pressed", on ? "true" : "false");
+  b.appendChild(el("span", "check", "✓"));
+  const main = el("div", "row-main");
+  main.appendChild(el("div", "row-title", title));
+  if (sub) main.appendChild(el("div", "row-sub", sub));
+  b.appendChild(main);
+  b.addEventListener("click", function () {
+    const patch = {}; patch[field] = !on;
+    logToday(patch);
+    render();
+  });
+  return b;
+}
+
+function lineChartCard(title, points, targetValue, unit) {
+  const card = el("div", "chart-wrap");
+  const head = el("div", "chart-title-row");
+  head.appendChild(el("div", "chart-title", title));
+  if (points.length >= 2) {
+    const delta = points[points.length - 1].value - points[0].value;
+    const goodDown = unit === "kg" && targetValue != null && targetValue < points[0].value;
+    const cls = delta === 0 ? "" : ((goodDown ? delta < 0 : delta > 0) ? " good" : " bad");
+    head.appendChild(el("span", "chart-delta" + cls,
+      (delta > 0 ? "+" : "") + delta.toFixed(1) + " " + unit + " since first log"));
+  }
+  card.appendChild(head);
+
+  if (points.length < 2) {
+    card.appendChild(el("div", "chart-empty", "Log at least two days to see a trend."));
+    return card;
+  }
+
+  const w = 600, h = 160, padX = 8, padY = 16;
+  const values = points.map(function (p) { return p.value; });
+  if (targetValue != null) values.push(targetValue);
+  let min = Math.min.apply(null, values), max = Math.max.apply(null, values);
+  if (min === max) { min -= 1; max += 1; }
+  const pad = (max - min) * 0.12;
+  min -= pad; max += pad;
+
+  function xAt(i) { return padX + (i / (points.length - 1)) * (w - padX * 2); }
+  function yAt(v) { return h - padY - ((v - min) / (max - min)) * (h - padY * 2); }
+
+  const svgns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgns, "svg");
+  svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+  svg.setAttribute("class", "chart");
+  svg.setAttribute("preserveAspectRatio", "none");
+
+  if (targetValue != null) {
+    const gl = document.createElementNS(svgns, "line");
+    gl.setAttribute("class", "gridline");
+    gl.setAttribute("x1", padX); gl.setAttribute("x2", w - padX);
+    gl.setAttribute("y1", yAt(targetValue).toFixed(1)); gl.setAttribute("y2", yAt(targetValue).toFixed(1));
+    gl.setAttribute("stroke-dasharray", "3 3");
+    svg.appendChild(gl);
+  }
+
+  let dPath = "";
+  points.forEach(function (p, i) {
+    dPath += (i === 0 ? "M" : "L") + xAt(i).toFixed(1) + "," + yAt(p.value).toFixed(1) + " ";
+  });
+  dPath = dPath.trim();
+  const aPath = "M" + xAt(0).toFixed(1) + "," + (h - padY).toFixed(1) + " L" + dPath.slice(1) +
+    " L" + xAt(points.length - 1).toFixed(1) + "," + (h - padY).toFixed(1) + " Z";
+
+  const area = document.createElementNS(svgns, "path");
+  area.setAttribute("class", "area"); area.setAttribute("d", aPath);
+  svg.appendChild(area);
+
+  const line = document.createElementNS(svgns, "path");
+  line.setAttribute("class", "line"); line.setAttribute("d", dPath);
+  svg.appendChild(line);
+
+  const lastPoint = points[points.length - 1];
+  const endDot = document.createElementNS(svgns, "circle");
+  endDot.setAttribute("class", "dot");
+  endDot.setAttribute("cx", xAt(points.length - 1).toFixed(1));
+  endDot.setAttribute("cy", yAt(lastPoint.value).toFixed(1));
+  endDot.setAttribute("r", 4);
+  svg.appendChild(endDot);
+
+  const endLabel = document.createElementNS(svgns, "text");
+  endLabel.setAttribute("class", "endlabel");
+  endLabel.setAttribute("text-anchor", "end");
+  endLabel.setAttribute("x", Math.max(30, xAt(points.length - 1) - 6).toFixed(1));
+  endLabel.setAttribute("y", Math.max(10, yAt(lastPoint.value) - 8).toFixed(1));
+  endLabel.textContent = lastPoint.value + " " + unit;
+  svg.appendChild(endLabel);
+
+  const hoverLine = document.createElementNS(svgns, "line");
+  hoverLine.setAttribute("class", "hoverline");
+  hoverLine.setAttribute("y1", padY); hoverLine.setAttribute("y2", h - padY);
+  hoverLine.style.display = "none";
+  svg.appendChild(hoverLine);
+
+  const wrap = el("div", "chart-svg-wrap");
+  wrap.appendChild(svg);
+  const tooltip = el("div", "chart-tooltip");
+  wrap.appendChild(tooltip);
+
+  function showAt(clientX, rect) {
+    const relX = ((clientX - rect.left) / rect.width) * w;
+    let idx = 0, best = Infinity;
+    points.forEach(function (p, i) {
+      const d = Math.abs(xAt(i) - relX);
+      if (d < best) { best = d; idx = i; }
+    });
+    const px = xAt(idx), py = yAt(points[idx].value);
+    hoverLine.setAttribute("x1", px.toFixed(1)); hoverLine.setAttribute("x2", px.toFixed(1));
+    hoverLine.style.display = "block";
+    tooltip.textContent = shortDate(points[idx].date) + " · " + points[idx].value + " " + unit;
+    tooltip.style.left = ((px / w) * rect.width) + "px";
+    tooltip.style.top = ((py / h) * rect.height) + "px";
+    tooltip.classList.add("show");
+  }
+  function hide() { hoverLine.style.display = "none"; tooltip.classList.remove("show"); }
+
+  wrap.addEventListener("pointermove", function (e) { showAt(e.clientX, wrap.getBoundingClientRect()); });
+  wrap.addEventListener("pointerleave", hide);
+  wrap.addEventListener("pointerdown", function (e) { showAt(e.clientX, wrap.getBoundingClientRect()); });
+
+  card.appendChild(wrap);
+  return card;
 }
 
 /* =========================================================
@@ -1100,12 +1485,227 @@ function renderShopping() {
   view.appendChild(clear);
 }
 
+function renderTrends() {
+  header("Trends", "Daily check-ins on real calendar dates — separate from the weekly plan above.");
+
+  const today = todayIso();
+  const entry = dailyEntry(today) || {};
+  const streak = computeStreak();
+  const followedWeek = followedLastNDays(7);
+
+  const ringRow = el("div", "ring-row");
+  ringRow.appendChild(ringItem(Math.min(streak / 7, 1), "--orange", String(streak), streak === 1 ? "day streak" : "day streak"));
+  ringRow.appendChild(ringItem(followedWeek / 7, "--blue", followedWeek + "/7", "days followed this week"));
+  view.appendChild(ringRow);
+
+  const cg = el("div", "group");
+  cg.appendChild(el("div", "group-header", "Today"));
+  const cl = el("div", "list");
+  cl.appendChild(checkRowDaily("planFollowed", "Followed the plan today", "Feeds the streak and calories saved"));
+
+  const moodRow = el("div", "row");
+  const moodMain = el("div", "row-main");
+  moodMain.appendChild(el("div", "row-title", "Mood"));
+  const moodBtns = el("div", "mood-row");
+  moodBtns.style.marginTop = "8px";
+  MOODS.forEach(function (m) {
+    const b = el("button", "mood-btn");
+    b.type = "button";
+    b.setAttribute("aria-pressed", entry.mood === m.id ? "true" : "false");
+    b.appendChild(el("span", "", m.emoji));
+    b.appendChild(el("span", "mood-label", m.label));
+    b.addEventListener("click", function () {
+      logToday({ mood: entry.mood === m.id ? null : m.id });
+      render();
+    });
+    moodBtns.appendChild(b);
+  });
+  moodMain.appendChild(moodBtns);
+  moodRow.appendChild(moodMain);
+  cl.appendChild(moodRow);
+
+  const actRow = el("div", "row");
+  const actMain = el("div", "row-main");
+  actMain.appendChild(el("div", "row-title", "Active today"));
+  const seg = el("div", "segmented");
+  seg.style.marginTop = "8px";
+  seg.style.marginBottom = "0";
+  [["none", "None"], ["run", "Run"], ["yoga", "Yoga"], ["other", "Other"]].forEach(function (opt) {
+    const b = el("button", null, opt[1]);
+    b.type = "button";
+    b.setAttribute("aria-selected", (entry.activity || "none") === opt[0] ? "true" : "false");
+    b.addEventListener("click", function () {
+      logToday({ activity: opt[0] === "none" ? null : opt[0] });
+      render();
+    });
+    seg.appendChild(b);
+  });
+  actMain.appendChild(seg);
+  actRow.appendChild(actMain);
+  cl.appendChild(actRow);
+
+  const weightRow = el("div", "field-row");
+  weightRow.appendChild(el("div", "field-label", "Weight today"));
+  const wInput = document.createElement("input");
+  wInput.type = "number"; wInput.inputMode = "decimal"; wInput.step = "0.1";
+  wInput.className = "field-input"; wInput.placeholder = "kg";
+  if (entry.weightKg != null) wInput.value = entry.weightKg;
+  wInput.addEventListener("change", function () {
+    const v = parseFloat(wInput.value);
+    logToday({ weightKg: isFinite(v) ? v : null });
+    render();
+  });
+  weightRow.appendChild(wInput);
+  cl.appendChild(weightRow);
+
+  const cheatRow = el("div", "field-row");
+  cheatRow.appendChild(el("div", "field-label", "Cheat / guilty pleasure"));
+  const cheatInput = document.createElement("input");
+  cheatInput.type = "text"; cheatInput.className = "field-input"; cheatInput.placeholder = "What did you have?";
+  if (entry.cheat && entry.cheat.item) cheatInput.value = entry.cheat.item;
+  cheatRow.appendChild(cheatInput);
+  const cheatGo = el("button", "field-go", "Save");
+  cheatGo.type = "button";
+  cheatGo.addEventListener("click", function () {
+    const v = cheatInput.value.trim();
+    logToday({ cheat: v ? { item: v } : null });
+    render();
+  });
+  cheatRow.appendChild(cheatGo);
+  cl.appendChild(cheatRow);
+
+  cg.appendChild(cl);
+  view.appendChild(cg);
+
+  const gg = el("div", "group");
+  gg.appendChild(el("div", "group-header", "Goals"));
+  const gl = el("div", "list");
+
+  const kcalRow = el("div", "field-row");
+  kcalRow.appendChild(el("div", "field-label", "Target daily calories"));
+  const kInput = document.createElement("input");
+  kInput.type = "number"; kInput.inputMode = "decimal"; kInput.step = "10";
+  kInput.className = "field-input"; kInput.placeholder = String(weekAvgKcal());
+  if (state.targetDailyKcal != null) kInput.value = state.targetDailyKcal;
+  kInput.addEventListener("change", function () {
+    const v = parseFloat(kInput.value);
+    state.targetDailyKcal = isFinite(v) ? v : null;
+    save(); render();
+  });
+  kcalRow.appendChild(kInput);
+  gl.appendChild(kcalRow);
+
+  const targetRow = el("div", "field-row");
+  targetRow.appendChild(el("div", "field-label", "Target weight"));
+  const tInput = document.createElement("input");
+  tInput.type = "number"; tInput.inputMode = "decimal"; tInput.step = "0.1";
+  tInput.className = "field-input"; tInput.placeholder = "kg";
+  if (state.targetWeightKg != null) tInput.value = state.targetWeightKg;
+  tInput.addEventListener("change", function () {
+    const v = parseFloat(tInput.value);
+    state.targetWeightKg = isFinite(v) ? v : null;
+    save(); render();
+  });
+  targetRow.appendChild(tInput);
+  gl.appendChild(targetRow);
+
+  gg.appendChild(gl);
+  view.appendChild(gg);
+
+  const kpi = el("div", "kpi-row");
+  kpi.appendChild(statTile("Streak", (streak > 0 ? "🔥 " : "") + streak + (streak === 1 ? " day" : " days"), streak > 0 ? "accent" : ""));
+  kpi.appendChild(statTile("Calories saved", caloriesSavedTotal().toLocaleString() + " kcal",
+    "", "vs " + targetDailyKcal() + " kcal/day target"));
+  kpi.appendChild(statTile("Nutrition earned", nutritionEarnedTotal().toLocaleString() + " kcal",
+    "", "from logged activity"));
+  view.appendChild(kpi);
+
+  const wg = el("div", "group");
+  wg.appendChild(el("div", "group-header", "Weight trend"));
+  view.appendChild(wg);
+  view.appendChild(lineChartCard("Weight", weightEntries(), state.targetWeightKg, "kg"));
+
+  const mg = el("div", "group");
+  mg.appendChild(el("div", "group-header", "Mood, last 14 days"));
+  const mWrap = el("div", "chart-wrap");
+  const strip = document.createElement("div");
+  strip.style.display = "flex"; strip.style.justifyContent = "space-between"; strip.style.gap = "3px";
+  for (let i = 13; i >= 0; i--) {
+    const iso = addDaysIso(today, -i);
+    const dEntry = dailyEntry(iso);
+    const moodDef = dEntry && dEntry.mood ? MOODS.find(function (m) { return m.id === dEntry.mood; }) : null;
+    const cell = document.createElement("div");
+    cell.style.flex = "1"; cell.style.textAlign = "center"; cell.style.fontSize = "17px";
+    cell.title = shortDate(iso);
+    if (moodDef) { cell.textContent = moodDef.emoji; } else { cell.textContent = "·"; cell.style.color = "var(--label-3)"; }
+    strip.appendChild(cell);
+  }
+  mWrap.appendChild(strip);
+  mg.appendChild(mWrap);
+  view.appendChild(mg);
+
+  const chg = el("div", "group");
+  chg.appendChild(el("div", "group-header", "Recent cheat days"));
+  const entries = cheatEntries();
+  if (entries.length) {
+    const cl2 = el("div", "list");
+    entries.slice(0, 10).forEach(function (c) {
+      const row = el("div", "row");
+      const main = el("div", "row-main");
+      main.appendChild(el("div", "row-title", c.item));
+      main.appendChild(el("div", "row-sub", shortDate(c.date)));
+      row.appendChild(main);
+      cl2.appendChild(row);
+    });
+    chg.appendChild(cl2);
+  } else {
+    chg.appendChild(el("p", "group-footer", "None logged yet. Use the box under Today above when it happens — no judgment, just the record."));
+  }
+  view.appendChild(chg);
+
+  const calG = el("div", "group");
+  calG.appendChild(el("div", "group-header", "Calendar"));
+  const now = new Date();
+  const year = now.getFullYear(), month = now.getMonth();
+  const head = el("div", "cal-head");
+  head.appendChild(el("div", "cal-month", now.toLocaleDateString(undefined, { month: "long", year: "numeric" })));
+  calG.appendChild(head);
+
+  const grid = el("div", "cal-grid");
+  ["S", "M", "T", "W", "T", "F", "S"].forEach(function (d) { grid.appendChild(el("div", "cal-dow", d)); });
+  const startWeekday = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  for (let i = 0; i < startWeekday; i++) grid.appendChild(el("div", "cal-cell empty"));
+  for (let day = 1; day <= daysInMonth; day++) {
+    const iso = isoDate(new Date(year, month, day));
+    const dEntry = dailyEntry(iso);
+    const cell = el("div", "cal-cell" + (iso === today ? " today" : "") + (dEntry && dEntry.planFollowed ? " followed" : ""));
+    cell.appendChild(el("div", "cal-daynum", String(day)));
+    if (dEntry && dEntry.mood) {
+      const moodDef = MOODS.find(function (m) { return m.id === dEntry.mood; });
+      if (moodDef) cell.appendChild(el("div", "cal-mood", moodDef.emoji));
+    }
+    if (dEntry && dEntry.planFollowed) cell.appendChild(el("div", "cal-dot"));
+    grid.appendChild(cell);
+  }
+  calG.appendChild(grid);
+
+  const legend = el("div", "cal-legend");
+  const l1 = el("span");
+  const dot1 = el("i"); dot1.style.background = "var(--green)";
+  l1.appendChild(dot1); l1.appendChild(document.createTextNode("Plan followed"));
+  legend.appendChild(l1);
+  calG.appendChild(legend);
+  view.appendChild(calG);
+}
+
 const VIEWS = {
   week: renderWeek,
   tonight: renderTonight,
   batches: renderBatches,
   recipes: renderRecipes,
-  shopping: renderShopping
+  shopping: renderShopping,
+  trends: renderTrends
 };
 
 /* =========================================================
@@ -1146,8 +1746,13 @@ function go(id) {
 
 function render() {
   view.innerHTML = "";
+  document.body.dataset.tab = state.tab;
   (VIEWS[state.tab] || renderWeek)();
   buildNav();
+  view.classList.remove("view-anim");
+  void view.offsetWidth;
+  view.classList.add("view-anim");
+  syncTray();
 }
 
 render();

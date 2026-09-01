@@ -1,8 +1,22 @@
 # Meal Plan
 
-Personal meal planning app for one household of two. Five screens — Week,
-Tonight, Batches, Recipes, Shopping — built around the idea that a pot is
-cooked once and covers several meals, rather than planning meal by meal.
+Personal meal planning app for one household of two. Six screens — Week,
+Tonight, Batches, Recipes, Shopping, Trends — built around the idea that a
+pot is cooked once and covers several meals, rather than planning meal by
+meal.
+
+**Trends** is a daily check-in: mood, whether you followed the plan,
+activity, weight, and cheat days — logged against real calendar dates,
+independent of the Week screen's weekday-keyed plan. From it: a streak,
+a weight trend chart with your target, a "calories saved" and "nutrition
+earned" estimate (formulas shown in the UI, not asserted as measured
+fact), and a month calendar. It deliberately does not read Apple Health,
+a Watch, or a smart scale yet — see "What is not decided yet" below for
+why and what the options are.
+
+On the Mac app, the menu-bar tray icon shows the current streak (🔥N) and
+updates live; closing the window hides it to the tray instead of quitting
+(quit from the tray menu).
 
 Two shapes of the same app live in this repo:
 
@@ -88,3 +102,25 @@ Three recipes (naatukodi curry, the North Eastern chicken curry, Turkish
 eggs) are placeholders — their calorie figures are estimates until real
 quantities are supplied. See `HANDOFF.md` section 7 for the rest of the
 open questions.
+
+**Apple Watch / Health / smart-scale sync, and widgets** are not built.
+All four need native Swift/Xcode surface area a Tauri shell cannot
+provide on its own:
+
+- **HealthKit** (Watch activity, Health app data) is only reachable from
+  a native iOS/Catalyst app with the HealthKit entitlement — a plain
+  AppKit window (what Tauri produces) cannot link against it at all.
+- **WidgetKit** (a Mac desktop widget) is a separate Xcode extension
+  target built in Swift — same constraint, no Tauri path.
+- **Smart scale** sync depends on the brand: some (e.g. Withings) expose
+  a normal OAuth API that's directly callable from this app; others only
+  ever surface data inside Apple Health, which is the HealthKit
+  constraint again.
+
+The realistic options, in order of effort: (1) a periodic export — an
+Apple Shortcuts automation writes Health/Watch metrics to a file this
+app reads, no entitlement or developer account needed, but not live and
+needs a one-time Shortcut setup; (2) a direct API integration for a scale
+brand that has one; (3) a native rewrite (SwiftUI/Catalyst) to get
+HealthKit, WidgetKit, and Shortcuts support properly — a multi-day
+project, not an increment on the current app.
