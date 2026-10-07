@@ -29,21 +29,26 @@ builds a debug APK on every push to `main` and uploads it as a workflow
 artifact, so it can be installed on a phone without a local Android
 toolchain.
 
-**Status:** steps 1 and 2 of `BUILD1-SPEC.md` section 6 are done —
-scaffold, schema, storage with migrations, the derived-logic layer (unit
-tested), and v1's Week 1 and 16 recipes migrated into the new schema as
-seed data. Screens are intentionally not built yet: the spec is explicit
-that Gate D (visual language — Material 3 vs. v1's HIG styling) has to
-be answered first. `src/app.tsx` is a placeholder that only proves the
-data layer loads.
+**Status:** steps 1–3 of `BUILD1-SPEC.md` section 6 are done — scaffold,
+schema, storage with migrations, the derived-logic layer (unit tested),
+v1's Week 1 and 16 recipes migrated as seed data, and all five screens
+(Gate D: kept v1's HIG look rather than moving to Material 3). Verified
+by running the app in a browser via Playwright — this container has no
+Android SDK, so the real step-3 checkpoint ("APK installed, planning a
+full week by hand works end to end") still needs a phone. **Step 4,
+notification scheduling, is not built yet.**
 
 ```
 app/
   src/
     types/schema.ts     # Ingredient, Family, Recipe, Week, Batch, Settings, ...
     storage/             # mealplan.json via @capacitor/filesystem, atomic write, migrations
-    derive/               # pure functions: nutrition, day totals, shopping, reminder content, balance checks
+    derive/               # pure functions: nutrition, day totals, shopping, reminder content, balance checks, batch warnings
     seed/                  # v1's 16 recipes + Week 1, migrated into the new schema
+    state/                  # @preact/signals store + mutations, debounced save with a flush-on-hide safety net
+    styles/                  # the ported v1 HIG design system (Gate D)
+    components/UI.tsx         # shared list/row/sheet/segmented/stepper/tab-bar components
+    screens/                   # Today, Week, Library (+ recipe/family editors), Shopping, Settings
   android/                 # Capacitor's generated Android project
   scripts/
     checkpoint-shopping-diff.ts   # the step-2 checkpoint comparison, kept as a record
