@@ -1,0 +1,69 @@
+/* Ported from v1 (web/index.html) per the Gate D decision — keep the HIG
+   look rather than move to Material 3. Android-specific concessions
+   (back-gesture correctness, system nav bar) are handled at the
+   navigation level, not here; the visual language itself carries over. */
+
+:root {
+  --bg: #F2F2F7;
+  --card: #FFFFFF;
+  --card-alt: #FFFFFF;
+  --label: #000000;
+  --label-2: rgba(60,60,67,0.60);
+  --label-3: rgba(60,60,67,0.30);
+  --separator: rgba(60,60,67,0.29);
+  --fill: rgba(120,120,128,0.12);
+  --fill-2: rgba(120,120,128,0.08);
+  --blue: #007AFF;
+  --green: #34C759;
+  --orange: #FF9500;
+  --red: #FF3B30;
+  --purple: #AF52DE;
+  --radius: 10px;
+  --radius-lg: 12px;
+  --tabbar: rgba(249,249,249,0.94);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --card: #1C1C1E;
+    --card-alt: #2C2C2E;
+    --label: #FFFFFF;
+    --label-2: rgba(235,235,245,0.60);
+    --label-3: rgba(235,235,245,0.30);
+    --separator: rgba(84,84,88,0.65);
+    --fill: rgba(120,120,128,0.24);
+    --fill-2: rgba(120,120,128,0.16);
+    --blue: #0A84FF;
+    --green: #30D158;
+    --orange: #FF9F0A;
+    --red: #FF453A;
+    --purple: #BF5AF2;
+    --tabbar: rgba(22,22,23,0.94);
+  }
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0; padding: 0; height: 100%;
+  background: var(--bg);
+  color: var(--label);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Roboto, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.35;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+button, input, textarea, select { font: inherit; color: inherit; }
+button { background: none; border: 0; margin: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; border-radius: 6px; }
+
+.main { padding: 0 0 96px; }
+.container { max-width: 720px; margin: 0 auto; padding: 0 16px; }
+
+.largetitle {
+  padding: 12px 0 2px;
+  font-size: 34px; font-weight: 700; letter-spacing: -0.022em;
+}
+.subtitle { color: var(--label-2); font-size: 15px; margin: 2px 0 18px; }

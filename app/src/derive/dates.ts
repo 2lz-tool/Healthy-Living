@@ -18,3 +18,8 @@ export function isoDate(d: Date): string {
 export function dateToHours(iso: string): number {
   return new Date(iso + "T00:00:00").getTime() / 3_600_000;
 }
+
+/** Whole days from `from` to `to` — negative if `to` is earlier. */
+export function daysBetween(from: string, to: string): number {
+  return Math.round((dateToHours(to) - dateToHours(from)) / 24);
+}
