@@ -1,132 +1,81 @@
 # Meal Plan
 
-Personal meal planning app for one household of two. Six screens — Week,
-Tonight, Batches, Recipes, Shopping, Trends — built around the idea that a
-pot is cooked once and covers several meals, rather than planning meal by
-meal.
+Personal meal planning app for one household of two.
 
-**Trends** is a daily check-in: mood, whether you followed the plan,
-activity, weight, and cheat days — logged against real calendar dates,
-independent of the Week screen's weekday-keyed plan. From it: a streak,
-a weight trend chart with your target, a "calories saved" and "nutrition
-earned" estimate (formulas shown in the UI, not asserted as measured
-fact), and a month calendar. It deliberately does not read Apple Health,
-a Watch, or a smart scale yet — see "What is not decided yet" below for
-why and what the options are.
+**Current direction: Build 1**, specified in `BUILD1-SPEC.md` — a recipe
+library with families and variants, a week planner, a shopping list
+derived from the plan, an evening reminder, and balance checks. Android
+phone first, via Capacitor. This supersedes the Mac/Tauri direction
+below; `web/` and `desktop/` are v1, kept as migration source material,
+not extended further. See `BUILD1-SPEC.md` for the full spec, data
+model, and work order.
 
-On the Mac app, the menu-bar tray icon shows the current streak (🔥N) and
-updates live; closing the window hides it to the tray instead of quitting
-(quit from the tray menu).
+## Build 1 — `app/`
 
-Two shapes of the same app live in this repo:
-
-- **`web/`** — the whole product. One self-contained `index.html`. No
-  build step, no dependencies, no network calls. Opens by double click,
-  works offline, works on the phone.
-- **`desktop/`** — a Tauri v2 shell that wraps `web/` in a native macOS
-  window (unified toolbar, vibrancy sidebar), so it shows up in the Dock
-  and Cmd-Tab like any other app. It is the same code, not a fork — there
-  is nothing to keep in sync.
-
-See `HANDOFF.md` for the full design rationale, data shapes, and work
-queue. This README only covers how to run things.
-
-## Run the web app
-
-No build, no server. Open `web/index.html` in a browser — double-click it
-in Finder, or drag it onto a browser window. Works offline. State (ticked
-meals, prep tasks, shopping basket, servings count, last tab) is saved to
-`localStorage` on the device, keyed under `mealplan.week1.v1`. There is no
-sync between devices or between this and the desktop app — each is its
-own local store.
-
-## Run the Mac app
-
-Building the `.app`/`.dmg` has to happen on a Mac — this repo may have
-been assembled elsewhere, but Tauri cannot cross-compile a macOS bundle
-without Apple's SDK, which only ships with Xcode.
-
-**One-time setup on the Mac:**
+Vite + TypeScript + Preact, wrapped in Capacitor for Android. Fully
+offline — no LLM calls, no server, no accounts.
 
 ```bash
-xcode-select --install          # Xcode command line tools
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh   # Rust
-```
-
-**Then, from the repo root:**
-
-```bash
-cd desktop
+cd app
 npm install
-npm run tauri dev      # launches a live window, reloads on file changes
+npm run dev          # live web preview
+npm test             # Vitest, the derivation layer
+npm run build         # tsc + vite build
+npx cap sync android   # copy the build into the Android project
 ```
 
-**To build a distributable app:**
+A GitHub Actions workflow (`.github/workflows/android-debug-apk.yml`)
+builds a debug APK on every push to `main` and uploads it as a workflow
+artifact, so it can be installed on a phone without a local Android
+toolchain.
 
-```bash
-npm run tauri build -- --target universal-apple-darwin
+**Status:** steps 1 and 2 of `BUILD1-SPEC.md` section 6 are done —
+scaffold, schema, storage with migrations, the derived-logic layer (unit
+tested), and v1's Week 1 and 16 recipes migrated into the new schema as
+seed data. Screens are intentionally not built yet: the spec is explicit
+that Gate D (visual language — Material 3 vs. v1's HIG styling) has to
+be answered first. `src/app.tsx` is a placeholder that only proves the
+data layer loads.
+
+```
+app/
+  src/
+    types/schema.ts     # Ingredient, Family, Recipe, Week, Batch, Settings, ...
+    storage/             # mealplan.json via @capacitor/filesystem, atomic write, migrations
+    derive/               # pure functions: nutrition, day totals, shopping, reminder content, balance checks
+    seed/                  # v1's 16 recipes + Week 1, migrated into the new schema
+  android/                 # Capacitor's generated Android project
+  scripts/
+    checkpoint-shopping-diff.ts   # the step-2 checkpoint comparison, kept as a record
 ```
 
-Output lands in
-`desktop/src-tauri/target/universal-apple-darwin/release/bundle/` as both
-`Meal Plan.app` and `Meal Plan.dmg`.
+## v1 (superseded) — `web/` and `desktop/`
 
-The build is unsigned (no paid Developer ID — not needed for a personal
-app). macOS will refuse the first open. Ad-hoc sign it once:
+The original single-file web app and its Tauri Mac wrapper. Kept as
+migration source material per `BUILD1-SPEC.md`; not developed further.
 
-```bash
-codesign --force --deep --sign - "path/to/Meal Plan.app"
-```
+- **`web/`** — one self-contained `index.html`. No build step, no
+  dependencies, no network calls. Opens by double click, works offline,
+  works on the phone. State is saved to `localStorage`, keyed under
+  `mealplan.week1.v1`.
+- **`desktop/`** — a Tauri v2 shell wrapping `web/` in a native macOS
+  window, with a menu-bar tray icon showing the current streak. See
+  `HANDOFF.md` for the full v1 design rationale and data shapes.
 
-If it still complains after moving the `.dmg` to `/Applications` or
-between machines:
+To run the web app: open `web/index.html` directly in a browser. To
+build the Mac app, see the Tauri commands in `HANDOFF.md` section 4 —
+building the `.app`/`.dmg` has to happen on a Mac itself.
 
-```bash
-xattr -dr com.apple.quarantine "/Applications/Meal Plan.app"
-```
-
-### Data safety
-
-The desktop app's `localStorage` lives in the app's own WebKit data
-directory under `~/Library/`, separate from Safari's. It survives quit,
-reopen, and machine restarts, and is not touched by browser cache
-clearing. It does *not* sync with the web version's storage in Safari —
-they are two independent local stores by design, so testing one can never
-overwrite or lose the other's data. If you want one shared source of
-truth later, that is a deliberate next step (see `HANDOFF.md`, `Later`),
-not something either version does today.
-
-## What is not decided yet
+### What v1 left open
 
 Three recipes (naatukodi curry, the North Eastern chicken curry, Turkish
-eggs) are placeholders — their calorie figures are estimates until real
-quantities are supplied. See `HANDOFF.md` section 7 for the rest of the
-open questions.
+eggs) were placeholders in v1 — their calorie figures were estimates.
+Build 1's schema carries this forward explicitly: those three recipes
+are migrated with `status: "draft"` and their ingredient quantities
+marked `estimated: true`, pending real quantities and yields (see
+`BUILD1-SPEC.md` section 10).
 
-**Apple Watch / Health / smart-scale sync, and Mac widgets — deliberately
-parked, not just missing.** Asked about it directly, so this is a decision
-to defer, not an oversight: keep building on the current Tauri app and
-revisit native work later if it still matters once the app's in daily
-use. No smart scale is in the picture yet either, so there's nothing to
-integrate there beyond the manual weight entry already in Trends. All
-four skipped items need native Swift/Xcode surface area a Tauri shell
-cannot provide on its own:
-
-- **HealthKit** (Watch activity, Health app data) is only reachable from
-  a native iOS/Catalyst app with the HealthKit entitlement — a plain
-  AppKit window (what Tauri produces) cannot link against it at all.
-- **WidgetKit** (a Mac desktop widget) is a separate Xcode extension
-  target built in Swift — same constraint, no Tauri path.
-- **Smart scale** sync depends on the brand: some (e.g. Withings) expose
-  a normal OAuth API that's directly callable from this app; others only
-  ever surface data inside Apple Health, which is the HealthKit
-  constraint again.
-
-If this comes back into scope, the realistic options, in order of effort,
-are: (1) a periodic export — an Apple Shortcuts automation writes
-Health/Watch metrics to a file this app reads, no entitlement or
-developer account needed, but not live and needs a one-time Shortcut
-setup; (2) a direct API integration, for a scale brand that publishes
-one (e.g. Withings); (3) a native rewrite (SwiftUI/Catalyst) to get
-HealthKit, WidgetKit, and Shortcuts support properly — a multi-day
-project, not an increment on the current app.
+Apple Watch/Health sync, smart-scale sync, and Mac widgets were explored
+and deliberately parked in v1 — see `BUILD1-SPEC.md` Gate 1, which drops
+Mac/Health/Watch integration outright in favor of Android with real
+local notifications.
