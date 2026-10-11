@@ -15,6 +15,13 @@ Gate D stays HIG; Gate N confirmed the radial-bloom reading of "loom
 infographic". All three gates are now resolved. `web/` and `desktop/`
 below are v1, kept as migration source material, not extended directly.
 
+**Further extended by `DASHBOARD-POLISH-HANDOFF.md`**: a token/component
+system for the rendered dashboard, a set of specific fixes (alignment,
+data bugs, copy), and some visual additions. Its own work order puts the
+token file and component library first, with a hard checkpoint — reviewed
+at `/styleguide` — before any of the fixes or widget rebuild happen. See
+below for where that stands.
+
 ## Build 1 — `app/`
 
 Vite + TypeScript + Preact, wrapped in Capacitor for Android. Fully
@@ -64,14 +71,31 @@ across a reload and correctly re-derive the next-meal state.
 
 Known simplifications, not yet resolved: "Open recipe" from the next-meal
 card just switches to the Library tab rather than deep-linking to that
-specific recipe; the ideal/tolerance band on the nutrition chart is
-conveyed only through petal colour, not the separate ring the spec
-describes; the gap-message sentence doesn't yet name which future meals
+specific recipe; the live nutrition widget's ideal/tolerance band is still
+conveyed only through petal colour, not the separate ring described in
+section 4.3 and now fixed in the new `src/ui/Bloom` component below — that
+fix just isn't wired into the live dashboard yet, pending the widget
+rebuild; the gap-message sentence doesn't yet name which future meals
 close a shortfall, just whether the plan does. Step 4 (notification
 scheduling) and an acceptance pass against section 6 are both still
 outstanding, as is the actual Tauri native wrapper (same macOS-toolchain
 limitation as before — this container can write the Rust/config but
 can't build or run it).
+
+**`DASHBOARD-POLISH-HANDOFF.md` progress — work order step 1 only, by
+design (its own checkpoint blocks anything further until this is
+reviewed):** the token system (`styles/tokens.css`, extended, not
+replaced — the pre-polish screens keep rendering off the old token names
+unchanged) and the full `src/ui/` component library from section 3.6
+(Card, WidgetHeader, Button, SegmentedControl, Checkbox, ListRow,
+SectionHeader, DayStrip, Badge, ProgressRing, ProgressBar, Tile, Chip,
+Bloom — the last one already carries fixes #12 and #13 from Part 1, since
+the component spec cross-references them directly). Icons are Lucide
+(`lucide-preact`), per section 3.5. The `/styleguide` route (also reachable
+via the `#styleguide` hash, for contexts without path routing) renders
+every component forced to both light and dark side by side. None of
+Part 1's fixes, Part 2's visual additions, or the actual widget rebuild
+have been started — that's steps 2 onward, after this is reviewed.
 
 ```
 app/

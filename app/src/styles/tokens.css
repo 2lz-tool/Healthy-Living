@@ -10,7 +10,7 @@
   --label: #000000;
   --label-2: rgba(60,60,67,0.60);
   --label-3: rgba(60,60,67,0.30);
-  --separator: rgba(60,60,67,0.29);
+  --separator: rgba(60,60,67,0.18);
   --fill: rgba(120,120,128,0.12);
   --fill-2: rgba(120,120,128,0.08);
   --blue: #007AFF;
@@ -19,8 +19,57 @@
   --red: #FF3B30;
   --purple: #AF52DE;
   --radius: 10px;
-  --radius-lg: 12px;
+  --radius-lg: 14px;
   --tabbar: rgba(249,249,249,0.94);
+
+  /* ---- DASHBOARD-POLISH-HANDOFF.md section 3.2-3.4: the semantic token
+     system every new component (src/ui/) builds against exclusively. Where
+     a concept already existed above with the same value, it's reused by
+     name here rather than duplicated (--green/--orange/--red). Where the
+     name changes (--card -> --surface, --blue -> --accent) both tokens
+     exist for now — the old names stay so the pre-polish screens render
+     unchanged until they're migrated in a later step; new code should
+     never reach for --card, --blue, --fill, --fill-2, --tabbar or --purple. */
+  --surface: #FFFFFF;
+  --surface-2: #F2F2F7;
+  --accent: #007AFF;
+  --material-bar: rgba(246,246,248,0.8);
+  --material-bar-blur: 20px;
+
+  /* family tints (3.2) — 8 muted identity colors, assigned in creation
+     order. Light -bg ~85-90% lightness, -fg checked at >=4.5:1 on -bg. */
+  --tint-clay-bg: #F3E3DC;   --tint-clay-fg: #8A4A32;
+  --tint-saffron-bg: #F6E6C8; --tint-saffron-fg: #8A5E14;
+  --tint-olive-bg: #E6EAD2;  --tint-olive-fg: #5B6B2E;
+  --tint-teal-bg: #D9EBEA;   --tint-teal-fg: #2A6B66;
+  --tint-slate-bg: #E1E6EC;  --tint-slate-fg: #425066;
+  --tint-plum-bg: #EAE1EE;   --tint-plum-fg: #6B3E78;
+  --tint-rose-bg: #F4E1E6;   --tint-rose-fg: #8A3C50;
+  --tint-sand-bg: #EFE8DA;   --tint-sand-fg: #7A6A42;
+
+  /* spacing (4px base) */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+
+  /* radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-full: 9999px;
+
+  /* elevation */
+  --elevation-popover: 0 8px 24px rgba(0,0,0,0.12);
+
+  /* typography — phone sizes by default (mobile-first), overridden to the
+     smaller macOS scale at >=900px in 3.1's shell breakpoint, below. Only
+     size/line change between platforms; weight is constant per role. */
+  --title-1-size: 28px; --title-1-line: 34px; --title-1-weight: 700;
+  --title-2-size: 22px; --title-2-line: 28px; --title-2-weight: 600;
+  --headline-size: 17px; --headline-line: 22px; --headline-weight: 600;
+  --body-size: 17px; --body-line: 22px; --body-weight: 400;
+  --callout-size: 16px; --callout-line: 21px; --callout-weight: 400;
+  --eyebrow-size: 13px; --eyebrow-line: 18px; --eyebrow-weight: 600;
+  --caption-size: 12px; --caption-line: 16px; --caption-weight: 400;
+  --figure-size: 28px; --figure-line: 32px; --figure-weight: 600;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -30,7 +79,7 @@
     --label: #FFFFFF;
     --label-2: rgba(235,235,245,0.60);
     --label-3: rgba(235,235,245,0.30);
-    --separator: rgba(84,84,88,0.65);
+    --separator: rgba(84,84,88,0.6);
     --fill: rgba(120,120,128,0.24);
     --fill-2: rgba(120,120,128,0.16);
     --blue: #0A84FF;
@@ -39,8 +88,47 @@
     --red: #FF453A;
     --purple: #BF5AF2;
     --tabbar: rgba(22,22,23,0.94);
+
+    --surface: #1C1C1E;
+    --surface-2: #2C2C2E;
+    --accent: #0A84FF;
+    --material-bar: rgba(28,28,30,0.8);
+
+    --tint-clay-bg: #4A3127;   --tint-clay-fg: #E8B8A2;
+    --tint-saffron-bg: #4A3C1C; --tint-saffron-fg: #ECC877;
+    --tint-olive-bg: #343D1E;  --tint-olive-fg: #C3D191;
+    --tint-teal-bg: #1E3A38;   --tint-teal-fg: #9BD6D0;
+    --tint-slate-bg: #2A313C;  --tint-slate-fg: #B9C5D6;
+    --tint-plum-bg: #392E3E;   --tint-plum-fg: #D3A9DD;
+    --tint-rose-bg: #402A30;   --tint-rose-fg: #E7A6B6;
+    --tint-sand-bg: #3A341F;   --tint-sand-fg: #D4C294;
   }
 }
+@media (min-width: 900px) {
+  :root {
+    --title-1-size: 22px; --title-1-line: 28px;
+    --title-2-size: 17px; --title-2-line: 22px;
+    --headline-size: 13px; --headline-line: 16px;
+    --body-size: 13px; --body-line: 18px;
+    --callout-size: 12px; --callout-line: 16px;
+    --eyebrow-size: 11px; --eyebrow-line: 13px;
+    --caption-size: 10px; --caption-line: 13px;
+    --figure-size: 22px; --figure-line: 26px;
+  }
+}
+
+.text-title-1 { font-size: var(--title-1-size); line-height: var(--title-1-line); font-weight: var(--title-1-weight); }
+.text-title-2 { font-size: var(--title-2-size); line-height: var(--title-2-line); font-weight: var(--title-2-weight); }
+.text-headline { font-size: var(--headline-size); line-height: var(--headline-line); font-weight: var(--headline-weight); }
+.text-body { font-size: var(--body-size); line-height: var(--body-line); font-weight: var(--body-weight); }
+.text-callout { font-size: var(--callout-size); line-height: var(--callout-line); font-weight: var(--callout-weight); }
+.text-eyebrow {
+  font-size: var(--eyebrow-size); line-height: var(--eyebrow-line); font-weight: var(--eyebrow-weight);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.text-caption { font-size: var(--caption-size); line-height: var(--caption-line); font-weight: var(--caption-weight); }
+.text-figure { font-size: var(--figure-size); line-height: var(--figure-line); font-weight: var(--figure-weight); font-variant-numeric: tabular-nums; }
+.text-tabular { font-variant-numeric: tabular-nums; }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
@@ -67,3 +155,43 @@ button { background: none; border: 0; margin: 0; padding: 0; cursor: pointer; }
   font-size: 34px; font-weight: 700; letter-spacing: -0.022em;
 }
 .subtitle { color: var(--label-2); font-size: 15px; margin: 2px 0 18px; }
+
+/* ---- /styleguide only: forces a subtree to light or dark regardless of
+   system preference, so both can be reviewed side by side. The real app
+   never uses these — it follows prefers-color-scheme everywhere else. */
+.theme-light {
+  color-scheme: light;
+  --bg: #F2F2F7; --card: #FFFFFF; --card-alt: #FFFFFF; --label: #000000;
+  --label-2: rgba(60,60,67,0.60); --label-3: rgba(60,60,67,0.30);
+  --separator: rgba(60,60,67,0.18); --fill: rgba(120,120,128,0.12); --fill-2: rgba(120,120,128,0.08);
+  --blue: #007AFF; --green: #34C759; --orange: #FF9500; --red: #FF3B30; --purple: #AF52DE;
+  --tabbar: rgba(249,249,249,0.94);
+  --surface: #FFFFFF; --surface-2: #F2F2F7; --accent: #007AFF; --material-bar: rgba(246,246,248,0.8);
+  --tint-clay-bg: #F3E3DC; --tint-clay-fg: #8A4A32;
+  --tint-saffron-bg: #F6E6C8; --tint-saffron-fg: #8A5E14;
+  --tint-olive-bg: #E6EAD2; --tint-olive-fg: #5B6B2E;
+  --tint-teal-bg: #D9EBEA; --tint-teal-fg: #2A6B66;
+  --tint-slate-bg: #E1E6EC; --tint-slate-fg: #425066;
+  --tint-plum-bg: #EAE1EE; --tint-plum-fg: #6B3E78;
+  --tint-rose-bg: #F4E1E6; --tint-rose-fg: #8A3C50;
+  --tint-sand-bg: #EFE8DA; --tint-sand-fg: #7A6A42;
+  background: var(--bg); color: var(--label);
+}
+.theme-dark {
+  color-scheme: dark;
+  --bg: #000000; --card: #1C1C1E; --card-alt: #2C2C2E; --label: #FFFFFF;
+  --label-2: rgba(235,235,245,0.60); --label-3: rgba(235,235,245,0.30);
+  --separator: rgba(84,84,88,0.6); --fill: rgba(120,120,128,0.24); --fill-2: rgba(120,120,128,0.16);
+  --blue: #0A84FF; --green: #30D158; --orange: #FF9F0A; --red: #FF453A; --purple: #BF5AF2;
+  --tabbar: rgba(22,22,23,0.94);
+  --surface: #1C1C1E; --surface-2: #2C2C2E; --accent: #0A84FF; --material-bar: rgba(28,28,30,0.8);
+  --tint-clay-bg: #4A3127; --tint-clay-fg: #E8B8A2;
+  --tint-saffron-bg: #4A3C1C; --tint-saffron-fg: #ECC877;
+  --tint-olive-bg: #343D1E; --tint-olive-fg: #C3D191;
+  --tint-teal-bg: #1E3A38; --tint-teal-fg: #9BD6D0;
+  --tint-slate-bg: #2A313C; --tint-slate-fg: #B9C5D6;
+  --tint-plum-bg: #392E3E; --tint-plum-fg: #D3A9DD;
+  --tint-rose-bg: #402A30; --tint-rose-fg: #E7A6B6;
+  --tint-sand-bg: #3A341F; --tint-sand-fg: #D4C294;
+  background: var(--bg); color: var(--label);
+}
