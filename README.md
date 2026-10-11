@@ -4,11 +4,16 @@ Personal meal planning app for one household of two.
 
 **Current direction: Build 1**, specified in `BUILD1-SPEC.md` — a recipe
 library with families and variants, a week planner, a shopping list
-derived from the plan, an evening reminder, and balance checks. Android
-phone first, via Capacitor. This supersedes the Mac/Tauri direction
-below; `web/` and `desktop/` are v1, kept as migration source material,
-not extended further. See `BUILD1-SPEC.md` for the full spec, data
-model, and work order.
+derived from the plan, an evening reminder, and balance checks. See
+`BUILD1-SPEC.md` for the full spec, data model, and work order.
+
+**Extended by `LANDING-HANDOFF.md`**, which reopens Gate 1: desktop is
+the first target again (Tauri v2 wrapping the same web app, Capacitor
+for the phone later), with a new landing dashboard — three widgets (next
+meal, shopping checklist, nutrition balance) replacing the Today tab.
+Gate D stays HIG. Gate N (the nutrition widget's visual form) is still
+open. `web/` and `desktop/` below are v1, kept as migration source
+material, not extended directly.
 
 ## Build 1 — `app/`
 
@@ -46,6 +51,15 @@ by running the app in a browser via Playwright — this container has no
 Android SDK, so the real step-3 checkpoint ("APK installed, planning a
 full week by hand works end to end") still needs a phone. **Step 4,
 notification scheduling, is not built yet.**
+
+**`LANDING-HANDOFF.md` progress:** schema additions (shopping days, slot
+times, the wider macro targets, `Batch.cookedAt`) and their migration
+are done, along with the four new derive functions it names —
+`nextMeal`, `shoppingWindow`, `notPlannedOptions`, `nutritionBloom` — all
+unit tested. The desktop layout shell, sidebar, and the three widgets
+themselves are not built yet: that's explicitly gated on Gate N (is the
+nutrition widget a radial bloom, or something else?), which is still
+open.
 
 ```
 app/

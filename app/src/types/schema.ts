@@ -129,6 +129,8 @@ export type Batch = {
   /** Portions frozen the same day, exempt from shelf life. */
   frozenPortions: number;
   assignments: BatchAssignment[];
+  /** ISO datetime, set when Tulika marks the batch cooked. LANDING-HANDOFF.md section 1. */
+  cookedAt?: string;
 };
 
 export type Week = {
@@ -162,9 +164,20 @@ export type BalanceTargets = {
   kcalMax: number;
   proteinMin: number;
   proteinMax: number;
+  /** Percent of kcal. LANDING-HANDOFF.md section 1. */
+  carbsPctMax: number;
+  fatPctMin: number;
+  fatPctMax: number;
+  /** Grams per day. */
+  fibreMin: number;
 };
 
 export type DayOfWeek = "sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat";
+
+/** "HH:MM", 24h, local time. "side" has no slot of its own — a side rides
+ * along with whichever meal it's assigned next to, so it's never itself
+ * "the next meal". LANDING-HANDOFF.md section 1 and 4.1. */
+export type SlotTimes = Record<"breakfast" | "lunch" | "dinner" | "snack", string>;
 
 export type Settings = {
   householdSize: number;
@@ -179,6 +192,9 @@ export type Settings = {
   reminderTime: string;
   /** Dislikes, stored now, used by Build 4's plan generator. */
   neverSuggest: string[];
+  /** Set in onboarding; at least one. LANDING-HANDOFF.md section 1. */
+  shoppingDays: DayOfWeek[];
+  slotTimes: SlotTimes;
 };
 
 /** The single on-disk document: mealplan.json. */
@@ -193,11 +209,20 @@ export type Store = {
   settings: Settings;
 };
 
-export const CURRENT_SCHEMA_VERSION = 1;
+export const CURRENT_SCHEMA_VERSION = 2;
 
 export const DEFAULT_SETTINGS: Settings = {
   householdSize: 2,
-  targets: { kcalMin: 1500, kcalMax: 1600, proteinMin: 90, proteinMax: 100 },
+  targets: {
+    kcalMin: 1500,
+    kcalMax: 1600,
+    proteinMin: 90,
+    proteinMax: 100,
+    carbsPctMax: 50,
+    fatPctMin: 20,
+    fatPctMax: 30,
+    fibreMin: 25,
+  },
   mealProteinMin: 25,
   vegServingGrams: 80,
   vegServingsMinPerDay: 3,
@@ -213,6 +238,8 @@ export const DEFAULT_SETTINGS: Settings = {
     "tofu stir fry",
     "sambar",
   ],
+  shoppingDays: ["sat"],
+  slotTimes: { breakfast: "08:30", lunch: "13:30", dinner: "20:30", snack: "17:00" },
 };
 
 export function emptyStore(): Store {

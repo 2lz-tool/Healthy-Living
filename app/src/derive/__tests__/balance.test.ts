@@ -5,7 +5,7 @@ import { dayBalanceChecks, weekBalanceChecks } from "../balance";
 
 const settings: Settings = {
   householdSize: 2,
-  targets: { kcalMin: 1500, kcalMax: 1600, proteinMin: 90, proteinMax: 100 },
+  targets: { kcalMin: 1500, kcalMax: 1600, proteinMin: 90, proteinMax: 100, carbsPctMax: 50, fatPctMin: 20, fatPctMax: 30, fibreMin: 25 },
   mealProteinMin: 25,
   vegServingGrams: 80,
   vegServingsMinPerDay: 3,
@@ -13,6 +13,8 @@ const settings: Settings = {
   prepDays: ["sun", "wed", "fri", "sat"],
   reminderTime: "19:00",
   neverSuggest: [],
+  shoppingDays: ["sat"],
+  slotTimes: { breakfast: "08:30", lunch: "13:30", dinner: "20:30", snack: "17:00" },
 };
 
 function day(overrides: Partial<DayTotals> = {}): DayTotals {
