@@ -69,6 +69,166 @@ function Swatch({ name, bg, fg }: { name: string; bg: string; fg?: string }) {
   );
 }
 
+type HeroOption = {
+  key: string;
+  name: string;
+  note: string;
+  bg: string;
+  fg: string;
+  badgeBg: string;
+};
+
+const HERO_OPTIONS: HeroOption[] = [
+  {
+    key: "new-token",
+    name: "A. New --hero token",
+    note: "A deep terracotta distinct from --orange. Status orange keeps its one meaning; this is a second, decorative-only color.",
+    bg: "#C2601A",
+    fg: "#FFFFFF",
+    badgeBg: "rgba(255,255,255,0.22)",
+  },
+  {
+    key: "clay-tint",
+    name: "B. Reuse the clay family tint",
+    note: "Flips --tint-clay-fg into a background. No new token — ties the hero treatment to the family-tint system already in place.",
+    bg: "#8A4A32",
+    fg: "#F3E3DC",
+    badgeBg: "rgba(243,227,220,0.22)",
+  },
+  {
+    key: "status-orange",
+    name: "C. Reuse --orange directly",
+    note: "No new color at all, but this orange would then mean both featured and needs attention: the conflict flagged earlier.",
+    bg: "var(--orange)",
+    fg: "#FFFFFF",
+    badgeBg: "rgba(255,255,255,0.22)",
+  },
+];
+
+function PhoneMock({ option }: { option: HeroOption }) {
+  return (
+    <div
+      style={{
+        width: 300,
+        borderRadius: 32,
+        border: "1px solid var(--separator)",
+        background: "var(--bg)",
+        overflow: "hidden",
+        boxShadow: "0 12px 32px rgba(0,0,0,0.18)",
+      }}
+    >
+      <div style={{ padding: "20px 16px 0" }}>
+        <div class="text-callout" style={{ color: "var(--label-2)" }}>
+          Sun 11 Oct
+        </div>
+        <div class="text-title-1" style={{ margin: "2px 0 16px" }}>
+          Good evening
+        </div>
+
+        <div style={{ background: option.bg, borderRadius: "var(--radius-lg)", padding: 20, color: option.fg }}>
+          <span
+            class="text-eyebrow"
+            style={{ background: option.badgeBg, padding: "3px 10px", borderRadius: "var(--radius-full)", display: "inline-block" }}
+          >
+            Next meal
+          </span>
+          <div class="text-title-1" style={{ margin: "12px 0 16px" }}>
+            Naatukodi curry
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: "var(--radius-full)",
+                background: option.fg,
+                color: option.bg,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flex: "0 0 auto",
+              }}
+            >
+              <WeekIcon size={14} />
+            </span>
+            <span class="text-callout">Lunch · 1:30 pm · Cook first</span>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ padding: "16px 16px 0" }}>
+        <div class="text-eyebrow" style={{ color: "var(--label-2)", marginBottom: 8 }}>
+          Today
+        </div>
+        <Card>
+          <ListRow title="Breakfast · Idli" sub="Ready · reheat" value="7:30 am" />
+          <ListRow title="Lunch · Naatukodi curry" sub="Cook first · 45 min active" value="1:30 pm" />
+          <ListRow title="Dinner" sub="Not planned" value="8:30 pm" />
+        </Card>
+      </div>
+
+      <div
+        style={{
+          marginTop: 20,
+          padding: "10px 20px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          background: "var(--material-bar)",
+          borderTop: "0.5px solid var(--separator)",
+        }}
+      >
+        <HomeIcon size={18} color={option.bg} />
+        <WeekIcon size={18} color="var(--label-2)" />
+        <span
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: "var(--radius-full)",
+            background: "var(--label)",
+            color: "var(--surface)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 22,
+            marginTop: -20,
+            boxShadow: "0 4px 10px rgba(0,0,0,0.25)",
+          }}
+        >
+          +
+        </span>
+        <LibraryIcon size={18} color="var(--label-2)" />
+        <ShoppingIcon size={18} color="var(--label-2)" />
+      </div>
+    </div>
+  );
+}
+
+function HeroExploration() {
+  return (
+    <section style={{ marginBottom: 40 }}>
+      <h2 class="text-title-2" style={{ margin: "0 0 6px" }}>
+        Orange hero card: three options
+      </h2>
+      <p class="text-callout" style={{ color: "var(--label-2)", margin: "0 0 16px", maxWidth: 640 }}>
+        Not part of DASHBOARD-POLISH-HANDOFF.md. A separate request to adapt a hero-card pattern (reference
+        screenshot) into Meal Plan, in orange. None of these are wired up; this is purely to pick a direction.
+      </p>
+      <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
+        {HERO_OPTIONS.map((opt) => (
+          <div key={opt.key} style={{ display: "flex", flexDirection: "column", gap: 10, width: 300 }}>
+            <PhoneMock option={opt} />
+            <div class="text-headline">{opt.name}</div>
+            <div class="text-callout" style={{ color: "var(--label-2)" }}>
+              {opt.note}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function Panel() {
   const [checked, setChecked] = useState<Record<string, boolean>>({ a: true, b: false });
   const [segment, setSegment] = useState<"week" | "today">("week");
@@ -230,6 +390,11 @@ export function StyleguideScreen() {
         Every src/ui/ component, forced to light and dark regardless of system setting. DASHBOARD-POLISH-HANDOFF.md
         part 3, work order step 1.
       </p>
+
+      <div class="theme-light" style={{ borderRadius: "var(--radius-lg)", border: "1px solid #ddd", padding: 24, marginBottom: 40 }}>
+        <HeroExploration />
+      </div>
+
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
         <div class="theme-light" style={{ borderRadius: "var(--radius-lg)", border: "1px solid #ddd" }}>
           <Panel />
