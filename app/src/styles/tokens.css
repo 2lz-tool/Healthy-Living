@@ -36,6 +36,13 @@
   --material-bar: rgba(246,246,248,0.8);
   --material-bar-blur: 20px;
 
+  /* hero card accent — the "orange hero card" request (chat, not either
+     handoff doc). Deliberately distinct from --orange: that token means
+     status (under target, needs cooking, short before shop) and stays
+     that way. --hero is decorative only, for a featured dish. */
+  --hero: #F38B2B;
+  --hero-fg: #FFFFFF;
+
   /* family tints (3.2) — 8 muted identity colors, assigned in creation
      order. Light -bg ~85-90% lightness, -fg checked at >=4.5:1 on -bg. */
   --tint-clay-bg: #F3E3DC;   --tint-clay-fg: #8A4A32;
@@ -93,6 +100,9 @@
     --surface-2: #2C2C2E;
     --accent: #0A84FF;
     --material-bar: rgba(28,28,30,0.8);
+
+    --hero: #F38B2B;
+    --hero-fg: #FFFFFF;
 
     --tint-clay-bg: #4A3127;   --tint-clay-fg: #E8B8A2;
     --tint-saffron-bg: #4A3C1C; --tint-saffron-fg: #ECC877;
@@ -167,6 +177,7 @@ button { background: none; border: 0; margin: 0; padding: 0; cursor: pointer; }
   --blue: #007AFF; --green: #34C759; --orange: #FF9500; --red: #FF3B30; --purple: #AF52DE;
   --tabbar: rgba(249,249,249,0.94);
   --surface: #FFFFFF; --surface-2: #F2F2F7; --accent: #007AFF; --material-bar: rgba(246,246,248,0.8);
+  --hero: #F38B2B; --hero-fg: #FFFFFF;
   --tint-clay-bg: #F3E3DC; --tint-clay-fg: #8A4A32;
   --tint-saffron-bg: #F6E6C8; --tint-saffron-fg: #8A5E14;
   --tint-olive-bg: #E6EAD2; --tint-olive-fg: #5B6B2E;
@@ -185,6 +196,7 @@ button { background: none; border: 0; margin: 0; padding: 0; cursor: pointer; }
   --blue: #0A84FF; --green: #30D158; --orange: #FF9F0A; --red: #FF453A; --purple: #BF5AF2;
   --tabbar: rgba(22,22,23,0.94);
   --surface: #1C1C1E; --surface-2: #2C2C2E; --accent: #0A84FF; --material-bar: rgba(28,28,30,0.8);
+  --hero: #F38B2B; --hero-fg: #FFFFFF;
   --tint-clay-bg: #4A3127; --tint-clay-fg: #E8B8A2;
   --tint-saffron-bg: #4A3C1C; --tint-saffron-fg: #ECC877;
   --tint-olive-bg: #343D1E; --tint-olive-fg: #C3D191;

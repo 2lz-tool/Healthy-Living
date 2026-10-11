@@ -89,55 +89,55 @@ export function NextMealWidget({
 
     if (result.state === "thaw") {
       return (
-        <>
+        <div class="hero-card">
           <div class="row-title">{label}</div>
           <div class="row-sub" style={{ marginTop: 4 }}>
             Move {result.recipeName} from the freezer now
           </div>
           <button
             type="button"
-            class="home-header-action"
+            class="hero-action"
             style={{ marginTop: 12 }}
             onClick={() => markBatchThawed(result.weekId, result.batchId, store.settings.householdSize)}
           >
             Mark thawed
           </button>
-        </>
+        </div>
       );
     }
 
     if (result.state === "cook_first") {
       return (
-        <>
-          <div class="row-title">{`${label} — ${result.recipeName}`}</div>
+        <div class="hero-card">
+          <div class="row-title">{`${label} · ${result.recipeName}`}</div>
           <div class="row-sub" style={{ marginTop: 4 }}>
             Cook first · {result.activeMinutes} min active
           </div>
           {result.pendingPrepActions.length > 0 && (
             <ul style={{ margin: "10px 0 0", padding: 0, listStyle: "none" }}>
               {result.pendingPrepActions.map((p, i) => (
-                <li key={i} style={{ fontSize: 13, color: p.overdue ? "var(--red)" : "var(--label-2)", marginTop: 4 }}>
+                <li key={i} class={"row-sub" + (p.overdue ? " overdue" : "")} style={{ fontSize: 13, marginTop: 4 }}>
                   {p.overdue ? `${p.text} — should have started already` : p.text}
                 </li>
               ))}
             </ul>
           )}
           <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
-            <button type="button" class="home-header-action" onClick={() => onNavigate("library")}>
+            <button type="button" class="hero-action" onClick={() => onNavigate("library")}>
               Open recipe
             </button>
-            <button type="button" class="home-header-action" onClick={() => markBatchCooked(result.weekId, result.batchId)}>
+            <button type="button" class="hero-action" onClick={() => markBatchCooked(result.weekId, result.batchId)}>
               Mark cooked
             </button>
           </div>
-        </>
+        </div>
       );
     }
 
     // ready
     return (
-      <>
-        <div class="row-title">{`${label} — ${result.recipeName}`}</div>
+      <div class="hero-card">
+        <div class="row-title">{`${label} · ${result.recipeName}`}</div>
         <div class="row-sub" style={{ marginTop: 4 }}>
           Ready · reheat
           {result.estimated && (
@@ -149,12 +149,7 @@ export function NextMealWidget({
         <div class="row-sub" style={{ marginTop: 2 }}>
           {Math.round(result.kcalPerPerson)} kcal · {Math.round(result.proteinPerPerson)} g protein / person
         </div>
-        <button
-          type="button"
-          class="home-header-action"
-          style={{ marginTop: 12 }}
-          onClick={() => toggleEaten(result.date, result.slot, result.batchId)}
-        >
+        <button type="button" class="hero-action" style={{ marginTop: 12 }} onClick={() => toggleEaten(result.date, result.slot, result.batchId)}>
           Mark eaten
         </button>
         {result.then && (
@@ -163,7 +158,7 @@ export function NextMealWidget({
             {result.then.recipeName ? ` · ${result.then.recipeName}` : ""} · {thenStateLabel(result.then.state)}
           </div>
         )}
-      </>
+      </div>
     );
   }
 }

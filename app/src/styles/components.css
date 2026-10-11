@@ -269,6 +269,19 @@ button.row:active { background: var(--fill-2); }
 .widget-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
 .widget-title { font-size: 13px; font-weight: 600; color: var(--label-2); letter-spacing: 0.02em; text-transform: uppercase; }
 .widget-link { font-size: 13px; color: var(--blue); font-weight: 600; }
+
+/* ---- hero card: the next-meal widget's featured-dish state (chat
+   request, option A). Scoped overrides so the shared .row-title/.row-sub/
+   .tag classes stay legible against the --hero background. */
+.hero-card { background: var(--hero); color: var(--hero-fg); border-radius: var(--radius-lg); padding: 14px; }
+.hero-card .row-title { color: var(--hero-fg); font-weight: 600; }
+.hero-card .row-sub { color: var(--hero-fg); opacity: 0.85; }
+.hero-card .row-sub.overdue { color: var(--hero-fg); opacity: 1; font-weight: 600; }
+.hero-card .tag.estimated { background: rgba(255,255,255,0.22); color: var(--hero-fg); }
+.hero-action {
+  color: var(--hero); font-weight: 600; font-size: 15px;
+  min-height: 36px; padding: 0 14px; background: #fff; border-radius: 8px;
+}
 .widget-empty { color: var(--label-2); font-size: 15px; padding: 8px 0; }
 
 /* ---------- nutrition bloom (LANDING-HANDOFF.md section 4.3) ---------- */

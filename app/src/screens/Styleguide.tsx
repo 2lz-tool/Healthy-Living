@@ -81,10 +81,10 @@ type HeroOption = {
 const HERO_OPTIONS: HeroOption[] = [
   {
     key: "new-token",
-    name: "A. New --hero token",
-    note: "A deep terracotta distinct from --orange. Status orange keeps its one meaning; this is a second, decorative-only color.",
-    bg: "#C2601A",
-    fg: "#FFFFFF",
+    name: "A. --hero token (now live, from the palette)",
+    note: "Distinct from --orange, so status orange keeps its one meaning. This is the color actually wired into NextMealWidget now.",
+    bg: "var(--hero)",
+    fg: "var(--hero-fg)",
     badgeBg: "rgba(255,255,255,0.22)",
   },
   {
