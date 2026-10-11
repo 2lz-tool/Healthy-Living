@@ -189,4 +189,100 @@ button.row:active { background: var(--fill-2); }
 @media (prefers-reduced-motion: reduce) {
   * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* ---------- desktop shell (LANDING-HANDOFF.md section 2) ---------- */
+/* Below 900px: phone layout — sidebar/header hidden, .main's existing
+   tabbar + topbar + .container flow take over, unchanged. */
+
+.sidebar {
+  display: none;
+}
+@media (min-width: 900px) {
+  .shell { display: flex; min-height: 100vh; }
+  .sidebar {
+    display: flex; flex-direction: column;
+    width: 220px; flex: 0 0 220px;
+    padding: 20px 10px;
+    background: var(--tabbar);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    border-right: 0.5px solid var(--separator);
+    position: sticky; top: 0; height: 100vh;
+  }
+  .sidebar-brand { font-size: 20px; font-weight: 700; letter-spacing: -0.016em; padding: 6px 10px 22px; }
+  .sidebar button {
+    display: flex; align-items: center; gap: 12px;
+    width: 100%; min-height: 40px; padding: 0 10px; margin-bottom: 2px;
+    border-radius: 8px; font-size: 15px; color: var(--label);
+  }
+  .sidebar button:hover { background: var(--fill-2); }
+  .sidebar button[aria-current="page"] { background: var(--fill); color: var(--blue); font-weight: 600; }
+  .sidebar .tab-glyph { font-size: 17px; width: 20px; text-align: center; }
+  .sidebar-spacer { flex: 1 1 auto; }
+
+  .shell .content { flex: 1 1 auto; min-width: 0; }
+  .shell .tabbar, .shell .topbar { display: none; }
+  .shell .main { padding-bottom: 0; }
+}
+
+.home-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  min-height: 56px; padding: 10px 32px;
+  max-width: 1280px; margin: 0 auto;
+}
+.home-header-label { font-size: 17px; font-weight: 600; letter-spacing: -0.014em; }
+.home-header-action {
+  color: var(--blue); font-weight: 600; font-size: 15px;
+  min-height: 36px; padding: 0 14px; background: var(--fill); border-radius: 8px;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  align-items: start;
+  gap: 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 4px 32px 48px;
+}
+.home-next-meal { grid-column: 1 / 8; grid-row: 1; }
+.home-nutrition { grid-column: 1 / 8; grid-row: 2; }
+.home-checklist { grid-column: 8 / 13; grid-row: 1 / 3; max-height: 100%; }
+/* Capped and internally scrollable only on desktop, where it sits beside
+   two stacked widgets of fixed height. On phone it's one item in the
+   normal single-column scroll, so it flows to its full length instead —
+   a nested scroll area on a small screen is worse, not better. */
+@media (min-width: 900px) {
+  .checklist-scroll { max-height: 480px; overflow-y: auto; margin: 0 -6px; padding: 0 6px; }
+}
+
+@media (max-width: 899px) {
+  .home-grid { grid-template-columns: 1fr; padding: 4px 16px 32px; gap: 20px; }
+  .home-next-meal, .home-checklist, .home-nutrition { grid-column: 1; grid-row: auto; }
+  .home-next-meal { order: 1; }
+  .home-checklist { order: 2; }
+  .home-nutrition { order: 3; }
+  .home-header { padding: 10px 16px; max-width: none; }
+}
+
+.widget { background: var(--card); border-radius: var(--radius-lg); padding: 16px; }
+.widget-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+.widget-title { font-size: 13px; font-weight: 600; color: var(--label-2); letter-spacing: 0.02em; text-transform: uppercase; }
+.widget-link { font-size: 13px; color: var(--blue); font-weight: 600; }
+.widget-empty { color: var(--label-2); font-size: 15px; padding: 8px 0; }
+
+/* ---------- nutrition bloom (LANDING-HANDOFF.md section 4.3) ---------- */
+.bloom-petal-actual, .bloom-petal-projected {
+  transform-box: fill-box; transform-origin: center;
+  animation: bloom-grow 380ms ease-out backwards;
+}
+@keyframes bloom-grow {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+.bloom-legend { display: flex; gap: 14px; font-size: 12px; color: var(--label-2); margin-top: 6px; flex-wrap: wrap; }
+.bloom-legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
+.bloom-table { margin-top: 12px; font-size: 13px; }
+.bloom-table-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 0.5px solid var(--separator); }
+.bloom-table-row:last-child { border-bottom: 0; }
 .hidden { display: none; }

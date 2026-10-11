@@ -3,6 +3,7 @@ import { addDaysIso, daysBetween } from "./dates";
 
 export type LeftoverOption = {
   kind: "leftover";
+  weekId: string;
   batchId: string;
   recipeId: string;
   recipeName: string;
@@ -50,6 +51,7 @@ export function notPlannedOptions(
 
       leftovers.push({
         kind: "leftover",
+        weekId: week.id,
         batchId: batch.id,
         recipeId: recipe.id,
         recipeName: recipe.name,

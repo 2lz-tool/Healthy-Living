@@ -303,3 +303,34 @@ export function TabBar<T extends string>({
     </nav>
   );
 }
+
+/** The desktop shell's sidebar nav — same destinations as TabBar, laid out
+ * vertically. LANDING-HANDOFF.md section 2. Hidden below 900px via CSS;
+ * TabBar takes over there. */
+export function Sidebar<T extends string>({
+  tabs,
+  active,
+  onChange,
+}: {
+  tabs: { id: T; label: string; glyph: string }[];
+  active: T;
+  onChange: (id: T) => void;
+}) {
+  return (
+    <nav class="sidebar" aria-label="Sections">
+      <div class="sidebar-brand">Meal Plan</div>
+      {tabs.map((t) => (
+        <button
+          key={t.id}
+          type="button"
+          aria-current={t.id === active ? "page" : undefined}
+          onClick={() => onChange(t.id)}
+        >
+          <span class="tab-glyph">{t.glyph}</span>
+          <span>{t.label}</span>
+        </button>
+      ))}
+      <div class="sidebar-spacer" />
+    </nav>
+  );
+}

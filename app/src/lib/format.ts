@@ -43,6 +43,22 @@ export function sundayOfWeek(iso: string): string {
   return isoDate(d);
 }
 
+/** "13:30" -> "1:30 pm". */
+export function formatTime12h(hhmm: string): string {
+  const [hStr, m] = hhmm.split(":");
+  const h = Number(hStr);
+  const period = h < 12 ? "am" : "pm";
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${h12}:${m} ${period}`;
+}
+
+/** "today" / "tomorrow" / a weekday name, relative to `today`. */
+export function relativeDayLabel(dateIso: string, today: string): string {
+  if (dateIso === today) return "today";
+  if (dateIso === addDaysIso(today, 1)) return "tomorrow";
+  return formatWeekday(dateIso);
+}
+
 export const SLOT_LABEL: Record<string, string> = {
   breakfast: "Breakfast",
   lunch: "Lunch",

@@ -11,9 +11,9 @@ derived from the plan, an evening reminder, and balance checks. See
 the first target again (Tauri v2 wrapping the same web app, Capacitor
 for the phone later), with a new landing dashboard — three widgets (next
 meal, shopping checklist, nutrition balance) replacing the Today tab.
-Gate D stays HIG. Gate N (the nutrition widget's visual form) is still
-open. `web/` and `desktop/` below are v1, kept as migration source
-material, not extended directly.
+Gate D stays HIG; Gate N confirmed the radial-bloom reading of "loom
+infographic". All three gates are now resolved. `web/` and `desktop/`
+below are v1, kept as migration source material, not extended directly.
 
 ## Build 1 — `app/`
 
@@ -52,26 +52,41 @@ Android SDK, so the real step-3 checkpoint ("APK installed, planning a
 full week by hand works end to end") still needs a phone. **Step 4,
 notification scheduling, is not built yet.**
 
-**`LANDING-HANDOFF.md` progress:** schema additions (shopping days, slot
-times, the wider macro targets, `Batch.cookedAt`) and their migration
-are done, along with the four new derive functions it names —
-`nextMeal`, `shoppingWindow`, `notPlannedOptions`, `nutritionBloom` — all
-unit tested. The desktop layout shell, sidebar, and the three widgets
-themselves are not built yet: that's explicitly gated on Gate N (is the
-nutrition widget a radial bloom, or something else?), which is still
-open.
+**`LANDING-HANDOFF.md` progress:** the full data layer (schema additions,
+migration, the five derive functions — `nextMeal`, `shoppingWindow`,
+`shoppingChecklist`, `notPlannedOptions`, `nutritionBloom` — all unit
+tested) and the desktop shell are both done: a responsive sidebar/tabbar
+shell (`app.tsx`, `Sidebar` in `components/UI.tsx`) with a 12-column
+`HomeScreen` dashboard, three widgets under `screens/home/`, and the
+below-900px single-column collapse. Verified end-to-end via Playwright,
+including that "Mark cooked" and the checklist's bought-checkbox persist
+across a reload and correctly re-derive the next-meal state.
+
+Known simplifications, not yet resolved: "Open recipe" from the next-meal
+card just switches to the Library tab rather than deep-linking to that
+specific recipe; the ideal/tolerance band on the nutrition chart is
+conveyed only through petal colour, not the separate ring the spec
+describes; the gap-message sentence doesn't yet name which future meals
+close a shortfall, just whether the plan does. Step 4 (notification
+scheduling) and an acceptance pass against section 6 are both still
+outstanding, as is the actual Tauri native wrapper (same macOS-toolchain
+limitation as before — this container can write the Rust/config but
+can't build or run it).
 
 ```
 app/
   src/
     types/schema.ts     # Ingredient, Family, Recipe, Week, Batch, Settings, ...
     storage/             # mealplan.json via @capacitor/filesystem, atomic write, migrations
-    derive/               # pure functions: nutrition, day totals, shopping, reminder content, balance checks, batch warnings
+    derive/               # pure functions: nutrition, day totals, shopping, reminder/checklist content, balance checks, batch warnings, next-meal state, nutrition bloom
     seed/                  # v1's 16 recipes + Week 1, migrated into the new schema
     state/                  # @preact/signals store + mutations, debounced save with a flush-on-hide safety net
-    styles/                  # the ported v1 HIG design system (Gate D)
-    components/UI.tsx         # shared list/row/sheet/segmented/stepper/tab-bar components
-    screens/                   # Today, Week, Library (+ recipe/family editors), Shopping, Settings
+    styles/                  # the ported v1 HIG design system (Gate D), plus the desktop shell/grid/widget styles
+    components/UI.tsx         # shared list/row/sheet/segmented/stepper/tab-bar/sidebar components
+    screens/
+      Home.tsx                  # the landing dashboard (LANDING-HANDOFF.md)
+      home/                       # its three widgets: next meal, checklist, nutrition bloom
+      Week, Library, Shopping, Settings.tsx
   android/                 # Capacitor's generated Android project
   scripts/
     checkpoint-shopping-diff.ts   # the step-2 checkpoint comparison, kept as a record

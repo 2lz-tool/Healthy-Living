@@ -54,6 +54,70 @@ export function upsertBatch(weekId: string, batch: Batch) {
   });
 }
 
+export function markBatchCooked(weekId: string, batchId: string) {
+  updateStore((s) => {
+    const week = s.weeks[weekId];
+    if (!week) return s;
+    const batches = week.batches.map((b) => (b.id === batchId ? { ...b, cookedAt: new Date().toISOString() } : b));
+    return { ...s, weeks: { ...s.weeks, [weekId]: { ...week, batches } } };
+  });
+}
+
+/** "Mark thawed" for a next-meal dashboard card in the thaw state. There's
+ * no per-assignment thawed flag in the schema (see derive/nextMeal.ts's
+ * isFrozenCovered doc comment) — this reuses frozenPortions itself,
+ * decrementing it by one assignment's worth, which moves the assignment
+ * out of the batch's inferred "frozen tail" on the next read. */
+export function markBatchThawed(weekId: string, batchId: string, householdSize: number) {
+  updateStore((s) => {
+    const week = s.weeks[weekId];
+    if (!week) return s;
+    const batches = week.batches.map((b) =>
+      b.id === batchId ? { ...b, frozenPortions: Math.max(0, b.frozenPortions - householdSize) } : b,
+    );
+    return { ...s, weeks: { ...s.weeks, [weekId]: { ...week, batches } } };
+  });
+}
+
+/** The dashboard's "not planned" leftover option: add one more assignment
+ * to an existing batch rather than creating a new one. */
+export function assignLeftoverBatch(weekId: string, batchId: string, date: string, slot: Batch["assignments"][number]["slot"]) {
+  updateStore((s) => {
+    const week = s.weeks[weekId];
+    if (!week) return s;
+    const batches = week.batches.map((b) =>
+      b.id === batchId && !b.assignments.some((a) => a.date === date && a.slot === slot)
+        ? { ...b, assignments: [...b.assignments, { date, slot }] }
+        : b,
+    );
+    return { ...s, weeks: { ...s.weeks, [weekId]: { ...week, batches } } };
+  });
+}
+
+/** The dashboard's "from the library" option: a same-day batch for one
+ * slot, scale 1, nothing frozen — the quick-assign case from an empty
+ * slot, not the full Add Batch sheet. */
+export function createQuickBatch(weekId: string, recipeId: string, date: string, slot: Batch["assignments"][number]["slot"]) {
+  updateStore((s) => {
+    const week = s.weeks[weekId] ?? ensureWeek(weekId, s.settings.householdSize);
+    const existingIds = new Set(Object.values(s.weeks).flatMap((w) => w.batches.map((b) => b.id)));
+    let n = 1;
+    let id = `b-${recipeId}-${n}`;
+    while (existingIds.has(id)) id = `b-${recipeId}-${++n}`;
+    const batch: Batch = {
+      id,
+      recipeId,
+      cookDate: date,
+      cookWhen: slot === "breakfast" || slot === "lunch" ? "morning" : "evening",
+      scale: 1,
+      frozenPortions: 0,
+      assignments: [{ date, slot }],
+      cookedAt: new Date().toISOString(),
+    };
+    return { ...s, weeks: { ...s.weeks, [weekId]: { ...week, batches: [...week.batches, batch] } } };
+  });
+}
+
 export function removeBatch(weekId: string, batchId: string) {
   updateStore((s) => {
     const week = s.weeks[weekId];
@@ -103,6 +167,40 @@ export function toggleBoughtIngredient(weekId: string, ingredientId: string) {
       ? week.boughtIngredients.filter((id) => id !== ingredientId)
       : [...week.boughtIngredients, ingredientId];
     return { ...s, weeks: { ...s.weeks, [weekId]: { ...week, boughtIngredients } } };
+  });
+}
+
+/** The dashboard checklist's checkbox: an ingredient can be needed across
+ * more than one week (a short-before-shopping cook in one week, a
+ * buy-on-day cook that's rolled into the next), so toggling it keeps every
+ * relevant week's boughtIngredients in sync rather than just one. */
+export function toggleBoughtAcrossWeeks(weekIds: string[], ingredientId: string) {
+  updateStore((s) => {
+    const nowBought = weekIds.some((id) => s.weeks[id]?.boughtIngredients.includes(ingredientId));
+    const weeks = { ...s.weeks };
+    for (const weekId of weekIds) {
+      const week = weeks[weekId] ?? ensureWeek(weekId, s.settings.householdSize);
+      const has = week.boughtIngredients.includes(ingredientId);
+      const boughtIngredients = nowBought
+        ? week.boughtIngredients.filter((id) => id !== ingredientId)
+        : has
+          ? week.boughtIngredients
+          : [...week.boughtIngredients, ingredientId];
+      weeks[weekId] = { ...week, boughtIngredients };
+    }
+    return { ...s, weeks };
+  });
+}
+
+export function markHaveAcrossWeeks(weekIds: string[], ingredientId: string) {
+  updateStore((s) => {
+    const weeks = { ...s.weeks };
+    for (const weekId of weekIds) {
+      const week = weeks[weekId] ?? ensureWeek(weekId, s.settings.householdSize);
+      if (week.haveIngredients.includes(ingredientId)) continue;
+      weeks[weekId] = { ...week, haveIngredients: [...week.haveIngredients, ingredientId] };
+    }
+    return { ...s, weeks };
   });
 }
 

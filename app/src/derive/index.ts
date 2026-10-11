@@ -7,5 +7,6 @@ export * from "./balance";
 export * from "./batchWarnings";
 export * from "./nextMeal";
 export * from "./shoppingWindow";
+export * from "./shoppingChecklist";
 export * from "./notPlanned";
 export * from "./nutritionBloom";

@@ -45,6 +45,7 @@ export type NextMealBase = { date: string; slot: TimedSlot };
 
 export type ReadyMeal = NextMealBase & {
   state: "ready";
+  weekId: string;
   batchId: string;
   recipeId: string;
   recipeName: string;
@@ -55,6 +56,7 @@ export type ReadyMeal = NextMealBase & {
 
 export type CookFirstMeal = NextMealBase & {
   state: "cook_first";
+  weekId: string;
   batchId: string;
   recipeId: string;
   recipeName: string;
@@ -64,6 +66,7 @@ export type CookFirstMeal = NextMealBase & {
 
 export type ThawMeal = NextMealBase & {
   state: "thaw";
+  weekId: string;
   batchId: string;
   recipeId: string;
   recipeName: string;
@@ -103,7 +106,7 @@ function classify(
   const { batch, recipe } = ref;
 
   if (isFrozenCovered(batch, a, householdSize)) {
-    return { state: "thaw", date, slot, batchId: batch.id, recipeId: recipe.id, recipeName: recipe.name };
+    return { state: "thaw", date, slot, weekId: ref.week.id, batchId: batch.id, recipeId: recipe.id, recipeName: recipe.name };
   }
 
   if (!batch.cookedAt) {
@@ -116,6 +119,7 @@ function classify(
       state: "cook_first",
       date,
       slot,
+      weekId: ref.week.id,
       batchId: batch.id,
       recipeId: recipe.id,
       recipeName: recipe.name,
@@ -129,6 +133,7 @@ function classify(
     state: "ready",
     date,
     slot,
+    weekId: ref.week.id,
     batchId: batch.id,
     recipeId: recipe.id,
     recipeName: recipe.name,
