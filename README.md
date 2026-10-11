@@ -29,6 +29,15 @@ builds a debug APK on every push to `main` and uploads it as a workflow
 artifact, so it can be installed on a phone without a local Android
 toolchain.
 
+For trying the app on a Mac before the phone build, `npm run
+build:desktop` produces `app/dist-desktop/index.html` — one
+self-contained HTML file (all JS/CSS inlined), openable directly from
+Finder in any browser, no server and no Xcode/Tauri toolchain needed.
+It's the same app and screens, saving to the browser's own IndexedDB
+instead of the real `mealplan.json` file the Android build uses — good
+for trying the UI and the plan, not a substitute for the on-device data
+store.
+
 **Status:** steps 1–3 of `BUILD1-SPEC.md` section 6 are done — scaffold,
 schema, storage with migrations, the derived-logic layer (unit tested),
 v1's Week 1 and 16 recipes migrated as seed data, and all five screens
