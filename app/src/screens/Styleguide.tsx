@@ -250,6 +250,16 @@ function Panel() {
             <Swatch key={t} name={t} bg={`--tint-${t}-bg`} fg={`--tint-${t}-fg`} />
           ))}
         </Row>
+        <div class="text-callout" style={{ color: "var(--label-2)", margin: "4px 0 -4px" }}>
+          hero (accent) + secondary palette (chat request, for icons/illustrations, not yet wired to anything)
+        </div>
+        <Row>
+          <Swatch name="hero" bg="--hero" />
+          <Swatch name="cream" bg="--secondary-cream" />
+          <Swatch name="teal-light" bg="--secondary-teal-light" />
+          <Swatch name="teal" bg="--secondary-teal" />
+          <Swatch name="sage" bg="--secondary-sage" />
+        </Row>
       </Section>
 
       <Section title="Typography">

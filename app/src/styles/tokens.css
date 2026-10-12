@@ -37,11 +37,22 @@
   --material-bar-blur: 20px;
 
   /* hero card accent — the "orange hero card" request (chat, not either
-     handoff doc). Deliberately distinct from --orange: that token means
-     status (under target, needs cooking, short before shop) and stays
-     that way. --hero is decorative only, for a featured dish. */
+     handoff doc). An accent, not the app's primary interactive color:
+     --accent/--blue below stay as they are. Also deliberately distinct
+     from --orange: that token means status (under target, needs cooking,
+     short before shop) and stays that way. --hero is decorative only,
+     for a featured dish. */
   --hero: #F38B2B;
   --hero-fg: #FFFFFF;
+
+  /* secondary palette (chat request, same source as --hero) — for
+     iconography and illustrations specifically, not general UI chrome.
+     Not yet wired to anything; registered here so the names exist when
+     that work happens. */
+  --secondary-cream: #F4F1BB;
+  --secondary-teal-light: #9BC1BC;
+  --secondary-teal: #5CA4A9;
+  --secondary-sage: #E6EBE0;
 
   /* family tints (3.2) — 8 muted identity colors, assigned in creation
      order. Light -bg ~85-90% lightness, -fg checked at >=4.5:1 on -bg. */
@@ -103,6 +114,11 @@
 
     --hero: #F38B2B;
     --hero-fg: #FFFFFF;
+
+    --secondary-cream: #F4F1BB;
+    --secondary-teal-light: #9BC1BC;
+    --secondary-teal: #5CA4A9;
+    --secondary-sage: #E6EBE0;
 
     --tint-clay-bg: #4A3127;   --tint-clay-fg: #E8B8A2;
     --tint-saffron-bg: #4A3C1C; --tint-saffron-fg: #ECC877;
@@ -178,6 +194,7 @@ button { background: none; border: 0; margin: 0; padding: 0; cursor: pointer; }
   --tabbar: rgba(249,249,249,0.94);
   --surface: #FFFFFF; --surface-2: #F2F2F7; --accent: #007AFF; --material-bar: rgba(246,246,248,0.8);
   --hero: #F38B2B; --hero-fg: #FFFFFF;
+  --secondary-cream: #F4F1BB; --secondary-teal-light: #9BC1BC; --secondary-teal: #5CA4A9; --secondary-sage: #E6EBE0;
   --tint-clay-bg: #F3E3DC; --tint-clay-fg: #8A4A32;
   --tint-saffron-bg: #F6E6C8; --tint-saffron-fg: #8A5E14;
   --tint-olive-bg: #E6EAD2; --tint-olive-fg: #5B6B2E;
@@ -197,6 +214,7 @@ button { background: none; border: 0; margin: 0; padding: 0; cursor: pointer; }
   --tabbar: rgba(22,22,23,0.94);
   --surface: #1C1C1E; --surface-2: #2C2C2E; --accent: #0A84FF; --material-bar: rgba(28,28,30,0.8);
   --hero: #F38B2B; --hero-fg: #FFFFFF;
+  --secondary-cream: #F4F1BB; --secondary-teal-light: #9BC1BC; --secondary-teal: #5CA4A9; --secondary-sage: #E6EBE0;
   --tint-clay-bg: #4A3127; --tint-clay-fg: #E8B8A2;
   --tint-saffron-bg: #4A3C1C; --tint-saffron-fg: #ECC877;
   --tint-olive-bg: #343D1E; --tint-olive-fg: #C3D191;
